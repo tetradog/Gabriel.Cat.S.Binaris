@@ -2,10 +2,18 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard1.2</TargetFramework>
+    <RepositoryUrl>https://github.com/tetradog/Gabriel.Cat.S.Binaris</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/tetradog/Gabriel.Cat.S.Binaris</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/tetradog/Gabriel.Cat.S.Binaris/blob/master/LICENSE.txt</PackageLicenseUrl>
+    <Copyright />
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <RepositoryType>Git</RepositoryType>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Gabriel.Cat.S.Utilitats\Gabriel.Cat.S.Utilitats\Gabriel.Cat.S.Utilitats.csproj" />
+    <Reference Include="Gabriel.Cat.S.Utilitats">
+      <HintPath>..\..\..\MisProgramas\Gabriel.Cat.S.Utilitats\Gabriel.Cat.S.Utilitats\bin\Release\netstandard1.2\Gabriel.Cat.S.Utilitats.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

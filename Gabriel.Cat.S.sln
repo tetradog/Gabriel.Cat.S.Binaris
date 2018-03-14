@@ -5,8 +5,6 @@ VisualStudioVersion = 15.0.27428.2002
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gabriel.Cat.S.Binaris", "Gabriel.Cat.S.Binaris.csproj", "{AD860425-7318-4AC8-B551-456C2461AF3E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gabriel.Cat.S.Utilitats", "..\Gabriel.Cat.S.Utilitats\Gabriel.Cat.S.Utilitats\Gabriel.Cat.S.Utilitats.csproj", "{5F16856C-6702-4ED2-9A7B-E22A0EC98A7D}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -17,10 +15,6 @@ Global
 		{AD860425-7318-4AC8-B551-456C2461AF3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AD860425-7318-4AC8-B551-456C2461AF3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AD860425-7318-4AC8-B551-456C2461AF3E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5F16856C-6702-4ED2-9A7B-E22A0EC98A7D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5F16856C-6702-4ED2-9A7B-E22A0EC98A7D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5F16856C-6702-4ED2-9A7B-E22A0EC98A7D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5F16856C-6702-4ED2-9A7B-E22A0EC98A7D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
