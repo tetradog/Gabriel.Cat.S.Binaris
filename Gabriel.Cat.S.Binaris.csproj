@@ -15,7 +15,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Gabriel.Cat.S.Utilitats" Version="1.0.0" />
+    <PackageReference Include="Gabriel.Cat.S.Seguretat" Version="1.0.1" />
+    <PackageReference Include="Gabriel.Cat.S.Utilitats" Version="1.0.2" />
   </ItemGroup>
 
 </Project>

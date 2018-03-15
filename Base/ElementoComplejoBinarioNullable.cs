@@ -35,7 +35,7 @@ namespace Gabriel.Cat.S.Binaris
 
         protected override byte[] IGetBytes(object obj)
         {
-            IList partesObj = GetPartsObject(obj);
+            IList partesObj = IGetPartsObject(obj);
             object[] bytesPartes;
 
             if (partesObj.Count != partes.Count)
@@ -47,7 +47,7 @@ namespace Gabriel.Cat.S.Binaris
             return new byte[0].AddArray(bytesPartes.Casting<object,byte[]>());
 
         }
-        protected abstract IList GetPartsObject(object obj);
+        protected abstract IList IGetPartsObject(object obj);
 
 
 
@@ -151,7 +151,7 @@ namespace Gabriel.Cat.S.Binaris
         }
         #endregion
         #region implemented abstract members of ElementoComplejoBinarioNullable
-        protected override IList GetPartsObject(object obj)
+        protected override IList IGetPartsObject(object obj)
         {
             return GetPartsObjectDelegate(obj);
         }

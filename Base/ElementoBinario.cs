@@ -6,12 +6,15 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Reflection;
+using Gabriel.Cat.S.Seguretat;
+
 namespace Gabriel.Cat.S.Binaris
 {
     public abstract class ElementoBinario
     {
         public const byte NULL = 0x0;
         public const byte NOTNULL = 0x1;
+        
         public byte[] GetBytes()
         {
             return GetBytes(this);
@@ -24,6 +27,7 @@ namespace Gabriel.Cat.S.Binaris
         }
 
         public abstract object GetObject(MemoryStream bytes);
+
 
         public static ElementoBinario ElementosTipoAceptado(Serializar.TiposAceptados tipo)
         {
