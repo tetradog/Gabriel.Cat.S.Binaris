@@ -8,12 +8,14 @@
     <Copyright />
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <RepositoryType>Git</RepositoryType>
+    <FileVersion>1.0.0.1</FileVersion>
+    <AssemblyVersion>1.0.0.1</AssemblyVersion>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>1.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
-    <Reference Include="Gabriel.Cat.S.Utilitats">
-      <HintPath>..\..\..\MisProgramas\Gabriel.Cat.S.Utilitats\Gabriel.Cat.S.Utilitats\bin\Release\netstandard1.2\Gabriel.Cat.S.Utilitats.dll</HintPath>
-    </Reference>
+    <PackageReference Include="Gabriel.Cat.S.Utilitats" Version="1.0.0" />
   </ItemGroup>
 
 </Project>
