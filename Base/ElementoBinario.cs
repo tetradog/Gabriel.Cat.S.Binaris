@@ -12,22 +12,44 @@ namespace Gabriel.Cat.S.Binaris
 {
     public abstract class ElementoBinario
     {
+        static readonly ByteArrayBinario byteArrayBinario = new ByteArrayBinario();
         public const byte NULL = 0x0;
         public const byte NOTNULL = 0x1;
-        
+        public Key Key { get; set; }
         public byte[] GetBytes()
         {
             return GetBytes(this);
         }
-        public abstract byte[] GetBytes(object obj);
+        public byte[] GetBytes(object obj) {
+            byte[] bytes = IGetBytes(obj);
+            if (Key != null)
+            {
+                bytes =byteArrayBinario.GetBytes(Key.Encrypt(bytes));
+            }
+            return bytes;
+
+        }
+
+        protected abstract byte[] IGetBytes(object obj);
 
         public object GetObject(byte[] bytes)
         {
             return GetObject(new MemoryStream(bytes));
         }
 
-        public abstract object GetObject(MemoryStream bytes);
+        public object GetObject(MemoryStream bytes)
+        {
+            byte[] bytesObj;
+ 
+            if (Key != null)
+            {
+                bytesObj =(byte[]) byteArrayBinario.GetObject(bytes);
+                bytes = new MemoryStream(Key.Decrypt(bytesObj));
+            }
+            return IGetObject(bytes);
+        }
 
+        protected abstract object IGetObject(MemoryStream bytes);
 
         public static ElementoBinario ElementosTipoAceptado(Serializar.TiposAceptados tipo)
         {

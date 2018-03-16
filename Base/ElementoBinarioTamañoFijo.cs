@@ -33,12 +33,12 @@ namespace Gabriel.Cat.S.Binaris
             }
         }
 
-        public override byte[] GetBytes(object obj)
+        protected override byte[] IGetBytes(object obj)
         {
             return Serializar.GetBytes(obj);
         }
 
-        public override object GetObject(MemoryStream bytes)
+        protected override object IGetObject(MemoryStream bytes)
         {
             return Serializar.ToObjetoAceptado(TipoDatos, bytes);
         }

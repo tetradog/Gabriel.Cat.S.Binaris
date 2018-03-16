@@ -8,7 +8,7 @@ namespace Gabriel.Cat.S.Binaris
     public abstract class ElementoBinarioNullable : ElementoBinario
     {
         #region implemented abstract members of ElementoBinario
-        public override byte[] GetBytes(object obj)
+        protected override byte[] IGetBytes(object obj)
         {
             byte[] bytesObj;
             if (obj == null)
@@ -17,9 +17,9 @@ namespace Gabriel.Cat.S.Binaris
 
             return bytesObj;
         }
-        protected abstract byte[] IGetBytes(object obj);
+        protected abstract byte[] JGetBytes(object obj);
 
-        public override object GetObject(System.IO.MemoryStream bytes)
+        protected override object IGetObject(System.IO.MemoryStream bytes)
         {
             object obj;
             byte comprobarNull =(byte) bytes.ReadByte();
@@ -39,7 +39,7 @@ namespace Gabriel.Cat.S.Binaris
             }
             return obj;
         }
-        protected abstract object IGetObject(System.IO.MemoryStream bytes);
+        protected abstract object JGetObject(System.IO.MemoryStream bytes);
         #endregion
 
     }

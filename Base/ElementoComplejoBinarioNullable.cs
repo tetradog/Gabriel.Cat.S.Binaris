@@ -33,7 +33,7 @@ namespace Gabriel.Cat.S.Binaris
 
         #region implemented abstract members of ElementoBinarioNullable
 
-        protected override byte[] IGetBytes(object obj)
+        protected override byte[] JGetBytes(object obj)
         {
             IList partesObj = IGetPartsObject(obj);
             object[] bytesPartes;
@@ -145,7 +145,7 @@ namespace Gabriel.Cat.S.Binaris
             GetObjectDelegate = getObjectDelegate;
         }
         #region implemented abstract members of ElementoBinarioNullable
-        protected override object IGetObject(System.IO.MemoryStream bytes)
+        protected override object JGetObject(System.IO.MemoryStream bytes)
         {
             return GetObjectDelegate(GetPartsObject(bytes));
         }

@@ -8,7 +8,7 @@ namespace Gabriel.Cat.S.Binaris
 {
     public class StringBinario : ElementoIListBinario<char>
     {
-        public StringBinario() : base(ElementoBinario.ElementosTipoAceptado(Serializar.TiposAceptados.Char), LongitudBinaria.UInt)
+        public StringBinario(LongitudBinaria longitud= LongitudBinaria.UInt) : base(ElementoBinario.ElementosTipoAceptado(Serializar.TiposAceptados.Char), longitud)
         {
         }
 
@@ -16,12 +16,12 @@ namespace Gabriel.Cat.S.Binaris
         {
         }
 
-        public override object GetObject(MemoryStream bytes)
+        protected override object IGetObject(MemoryStream bytes)
         {
             return new string((char[])base.GetObject(bytes));
         }
 
-        public override byte[] GetBytes(object obj)
+        protected override byte[] IGetBytes(object obj)
         {
             string str = obj as string;
             if (str == null)

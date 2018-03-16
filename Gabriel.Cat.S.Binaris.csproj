@@ -6,12 +6,14 @@
     <PackageProjectUrl>https://github.com/tetradog/Gabriel.Cat.S.Binaris</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/tetradog/Gabriel.Cat.S.Binaris/blob/master/LICENSE.txt</PackageLicenseUrl>
     <Copyright />
-    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <RepositoryType>Git</RepositoryType>
     <FileVersion>1.0.0.1</FileVersion>
     <AssemblyVersion>1.0.0.1</AssemblyVersion>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>1.0.2</Version>
+    <Version>1.0.3</Version>
+    <Authors>Gabriel</Authors>
+    <Company>Gabriel.Cat.Developer</Company>
   </PropertyGroup>
 
   <ItemGroup>

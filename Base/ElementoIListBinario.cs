@@ -89,7 +89,7 @@ namespace Gabriel.Cat.S.Binaris
         }
 
         #region implemented abstract members of ElementoBinarioNullable
-        protected override byte[] IGetBytes(object obj)
+        protected override byte[] JGetBytes(object obj)
         {
             return GetBytes((IList<T>)obj);
         }
@@ -139,7 +139,7 @@ namespace Gabriel.Cat.S.Binaris
             }
             return bytesObjs;
         }
-        protected override object IGetObject(MemoryStream bytes)
+        protected override object JGetObject(MemoryStream bytes)
         {
 
             //la marca fin y la longitud Que Se usara  y el elemento es el minimo...
@@ -211,4 +211,5 @@ namespace Gabriel.Cat.S.Binaris
             return new ElementoIListBinario<T>(ElementoBinario.ElementosTipoAceptado(tipo));
         }
     }
+
 }
