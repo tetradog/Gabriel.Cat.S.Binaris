@@ -59,9 +59,9 @@ namespace Gabriel.Cat.S.Binaris
                 case Serializar.TiposAceptados.String:
                     elemento = new StringBinario();
                     break;
-              /*  case Serializar.TiposAceptados.Bitmap:
+                case Serializar.TiposAceptados.Bitmap:
                     elemento = new BitmapBinario();
-                    break;*/
+                    break;
                 default:
                     elemento = new ElementoBinarioTamañoFijo(tipo);
                     break;
