@@ -111,11 +111,11 @@ namespace Gabriel.Cat.S.Extension
             for (int i = 0; i < partes; i++)
             {
                 auxLenght = br.ReadInt32();
-                lenght += auxLenght;
+                lenght +=key!=null?key.LengthDecrypt(auxLenght): auxLenght;
                 br.BaseStream.Position += auxLenght;
             }
             br.BaseStream.Position = LENGTHINT;
-            bytesDecrypted = new byte[key != null ? key.LengthDecrypt(lenght) : lenght];
+            bytesDecrypted = new byte[ lenght];
             for (int i = 0; i < partes; i++)
             {
                 auxLenght = br.ReadInt32();
