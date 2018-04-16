@@ -4,28 +4,30 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Gabriel.Cat.S.Seguretat;
+using Gabriel.Cat.S.Utilitats;
+
 namespace Gabriel.Cat.S.Binaris
 {
-    //public class KeyBinarioConId : ElementoComplejoBinario
-    //{
-    //  public KeyBinarioConId():base()
-    //    {
-    //        Partes.Add(new ByteArrayBinario());
-    //        Partes.Add(new KeyBinario());
-    //    }
+    public class KeyBinarioConId : ElementoComplejoBinario
+    {
+        public KeyBinarioConId() : base()
+        {
+            Partes.Add(new ByteArrayBinario());
+            Partes.Add(new KeyBinario());
+        }
 
-    //    //protected override IList IGetPartsObject(object obj)
-    //    //{
-    //    //    Key key=obj as Key;
-    //    //    return new object[] {key.Id.GetId(),key };
-    //    //}
+        protected override IList IGetPartsObject(object obj)
+        {
+            Key key = obj as Key;
+            return new object[] { key.Id.GetId(), key };
+        }
 
-    //    //protected override object JGetObject(MemoryStream bytes)
-    //    //{
-    //    //    object[] partes = GetPartsObject(bytes);
-    //    //    return new Key(new IdUnico((byte[])partes[0]), (Key.ItemKey)partes[1]);
-    //    //}
-    //}
+        protected override object JGetObject(MemoryStream bytes)
+        {
+            object[] partes = GetPartsObject(bytes);
+            return new Key((Key.ItemKey[])partes[1], new IdUnico((byte[])partes[0]));
+        }
+    }
     public class KeyBinario : ElementoIListBinario<ItemBinario>
     {
         public KeyBinario( LongitudBinaria unidadCantidadElementos = LongitudBinaria.UInt) : base(new ItemBinario(), unidadCantidadElementos)

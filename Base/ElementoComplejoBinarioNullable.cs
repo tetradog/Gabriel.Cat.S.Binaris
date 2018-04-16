@@ -44,7 +44,7 @@ namespace Gabriel.Cat.S.Binaris
             bytesPartes = new object[partes.Count];
             for (int i = 0; i < partes.Count; i++)
                 bytesPartes[i] = partes[i].GetBytes(partesObj[i]);
-            return new byte[0].AddArray(bytesPartes.Casting<object,byte[]>());
+            return new byte[0].AddArray(bytesPartes.Casting<byte[]>());
 
         }
         protected abstract IList IGetPartsObject(object obj);
