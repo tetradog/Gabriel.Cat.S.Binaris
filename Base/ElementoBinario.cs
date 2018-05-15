@@ -115,14 +115,19 @@ namespace Gabriel.Cat.S.Binaris
             ElementoBinario elementoBinario;
             ElementoBinario elementoBinarioAux;
             Type tipoAux;
-            KeyValuePairBinario<> elementoKeyValuePair;
+            dynamic elementoKeyValuePair;
+            Type[] tiposAux;
+            Type tipoKeyValuePair=typeof(KeyValuePair<,>);
             if (IsCompatible(tipo))
             {
-                if (true)
+                if (tipoKeyValuePair.Equals(tipo.GetGenericTypeDefinition()))//mirar si compara KeyValuePair con KeyValuePair
                 {
-                    elementoKeyValuePair = new KeyValuePairBinario<>();
+                    tiposAux = tipo.GetType().GetGenericArguments();
+                    elementoKeyValuePair = (ElementoBinario)Activator.CreateInstance(typeof(KeyValuePairBinario<,>).MakeGenericType(tipo), new Object[] { Activator.CreateInstance(tiposAux[0]), Activator.CreateInstance(tiposAux[1]) });
                     //obtengo tipoKey
-                    if (true)
+                    
+                    tipoAux = tiposAux[0];
+                    if (tipoKeyValuePair.Equals(tipoAux.GetGenericTypeDefinition()))
                     {
                         elementoBinarioAux = GetElementoBinario(tipoAux);
                     }
@@ -131,8 +136,9 @@ namespace Gabriel.Cat.S.Binaris
                         elementoBinarioAux = IGetElementoBinario(tipoAux);
                     }
                     elementoKeyValuePair.FormatoKey = elementoBinarioAux;
+                    tipoAux = tiposAux[1];
                     //obtengo tipoValue
-                    if (true)
+                    if (tipoKeyValuePair.Equals(tipoAux.GetGenericTypeDefinition()))
                     {
                         elementoBinarioAux = GetElementoBinario(tipoAux);
                     }
@@ -145,16 +151,18 @@ namespace Gabriel.Cat.S.Binaris
                 }
                 else
                 {
-                    elementoBinarioAux = IGetElementoBinario(tipo);
+                    elementoBinario = IGetElementoBinario(tipo);
                 }
             }
             else elementoBinario = null;
+
             return elementoBinario;
         }
         private static ElementoBinario IGetElementoBinario(Type tipo)
         {
+            Type tipoKeyValuePair = typeof(KeyValuePair<,>);
             ElementoBinario elementoBinario;
-            if (true)
+            if (tipoKeyValuePair.Equals(tipo.GetGenericTypeDefinition()))
             {
                 elementoBinario = GetElementoBinario(tipo);
             }
