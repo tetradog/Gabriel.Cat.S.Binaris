@@ -83,6 +83,9 @@ namespace Gabriel.Cat.S.Binaris
                 IList<Propiedad> propiedades = obj.GetPropiedades();
                 IList lstAPoner;
                 IList lstObj;
+                IDictionary dicAPoner;
+                IDictionary dicObjs;
+
                 for (int i = 0, j = 0; i < propiedades.Count; i++)
                 {
                     if (propiedades[i].Info.Uso == USONECESARIO && ElementoBinario.IsCompatible(partes[j].GetType()))
@@ -96,6 +99,15 @@ namespace Gabriel.Cat.S.Binaris
                         for (int k = 0; k < lstAPoner.Count; k++)
                             lstObj.Add(lstAPoner[k]);
                     }
+                    else if (propiedades[i].Info.Uso == USOILISTNECESARIO && partes[j].GetType().ImplementInterficie(typeof(IDictionary)) && ElementoBinario.IsCompatible(partes[j]))
+                    {//por probar
+                        dicAPoner = partes[j++] as IDictionary;
+                        //cojo la lista del objeto y le añado la nueva
+                        dicObjs = obj.GetProperty(propiedades[i].Info.Nombre) as IDictionary;
+                       
+                        foreach(dynamic pair in dicAPoner)
+                            dicObjs.Add(pair.Key,pair.Value);
+                    }
                 }
                 return obj;
             };
@@ -104,6 +116,7 @@ namespace Gabriel.Cat.S.Binaris
            IList< PropiedadTipo> properties = typeof(T).GetPropiedadesTipos();
             List<ElementoBinario> elementos = new List<ElementoBinario>();
             IList list;
+            IDictionary dic;
             for (int i = 0; i < properties.Count; i++)
             {
                 if (properties[i].Uso == USONECESARIO && ElementoBinario.IsCompatible(properties[i].Tipo))
@@ -118,6 +131,25 @@ namespace Gabriel.Cat.S.Binaris
                         {
                             //si es de un tipo compatible lo añado
                             elementos.Add(ElementoBinario.GetElementoBinario(list));
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new PropiedadNoCompatibleException(properties[i], ex);
+
+                    }
+
+                }
+                else if (properties[i].Uso == USOILISTNECESARIO && properties[i].Tipo.ImplementInterficie(typeof(IDictionary)))
+                {
+                    try
+                    {
+
+                        dic = (IDictionary)Activator.CreateInstance(properties[i].Tipo);
+                        if (ElementoBinario.IsCompatible(dic.DicOfWhat()))
+                        {
+                            //si es de un tipo compatible lo añado
+                            elementos.Add(ElementoBinario.GetElementoBinario(dic));
                         }
                     }
                     catch (Exception ex)
