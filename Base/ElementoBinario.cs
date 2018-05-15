@@ -89,7 +89,19 @@ namespace Gabriel.Cat.S.Binaris
                     Serializar.AssemblyToEnumTipoAceptado(tipo.AssemblyQualifiedName);
                     compatible = true;
                 }
-                catch { compatible = false; }
+                catch {
+                    switch(tipo.AssemblyQualifiedName)
+                    {
+                        //poner tipos
+                        default:
+                            compatible = false;
+                            break;
+                    }
+                    if(!compatible)
+                    {
+                       //KeyValuePair<TKey,TValue> ->TKey && TValue are compatible type
+                    }
+                }
             }
             return compatible;
         }
@@ -101,13 +113,58 @@ namespace Gabriel.Cat.S.Binaris
         public static ElementoBinario GetElementoBinario(Type tipo)
         {
             ElementoBinario elementoBinario;
+            ElementoBinario elementoBinarioAux;
+            Type tipoAux;
+            KeyValuePairBinario<> elementoKeyValuePair;
             if (IsCompatible(tipo))
+            {
+                if (true)
+                {
+                    elementoKeyValuePair = new KeyValuePairBinario<>();
+                    //obtengo tipoKey
+                    if (true)
+                    {
+                        elementoBinarioAux = GetElementoBinario(tipoAux);
+                    }
+                    else
+                    {
+                        elementoBinarioAux = IGetElementoBinario(tipoAux);
+                    }
+                    elementoKeyValuePair.FormatoKey = elementoBinarioAux;
+                    //obtengo tipoValue
+                    if (true)
+                    {
+                        elementoBinarioAux = GetElementoBinario(tipoAux);
+                    }
+                    else
+                    {
+                        elementoBinarioAux = IGetElementoBinario(tipoAux);
+                    }
+                    elementoKeyValuePair.FormatoValue = elementoBinarioAux;
+                    elementoBinario = elementoKeyValuePair;
+                }
+                else
+                {
+                    elementoBinarioAux = IGetElementoBinario(tipo);
+                }
+            }
+            else elementoBinario = null;
+            return elementoBinario;
+        }
+        private static ElementoBinario IGetElementoBinario(Type tipo)
+        {
+            ElementoBinario elementoBinario;
+            if (true)
+            {
+                elementoBinario = GetElementoBinario(tipo);
+            }
+            else
             {
                 if (tipo.ImplementInterficie(typeof(IElementoBinarioComplejo)))
                 {
                     try
                     {
-                        
+
                         elementoBinario = ((IElementoBinarioComplejo)Activator.CreateInstance(tipo)).Serialitzer;
                     }
                     catch
@@ -122,7 +179,6 @@ namespace Gabriel.Cat.S.Binaris
                     elementoBinario = ElementosTipoAceptado(Serializar.AssemblyToEnumTipoAceptado(tipo.AssemblyQualifiedName));
                 }
             }
-            else elementoBinario = null;
             return elementoBinario;
         }
         /// <summary>
