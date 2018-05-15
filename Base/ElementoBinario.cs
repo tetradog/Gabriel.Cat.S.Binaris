@@ -20,11 +20,12 @@ namespace Gabriel.Cat.S.Binaris
         {
             return GetBytes(this);
         }
-        public byte[] GetBytes(object obj) {
+        public byte[] GetBytes(object obj)
+        {
             byte[] bytes = IGetBytes(obj);
             if (Key != null)
             {
-                bytes =byteArrayBinario.GetBytes(Key.Encrypt(bytes));
+                bytes = byteArrayBinario.GetBytes(Key.Encrypt(bytes));
             }
             return bytes;
 
@@ -40,10 +41,10 @@ namespace Gabriel.Cat.S.Binaris
         public object GetObject(MemoryStream bytes)
         {
             byte[] bytesObj;
- 
+
             if (Key != null)
             {
-                bytesObj =(byte[]) byteArrayBinario.GetObject(bytes);
+                bytesObj = (byte[])byteArrayBinario.GetObject(bytes);
                 bytes = new MemoryStream(Key.Decrypt(bytesObj));
             }
             return IGetObject(bytes);
@@ -82,6 +83,8 @@ namespace Gabriel.Cat.S.Binaris
         public static bool IsCompatible(Type tipo)
         {
             bool compatible = tipo.ImplementInterficie(typeof(IElementoBinarioComplejo));
+            Type[] tiposAux;
+            Type tipoKeyValuePair = typeof(KeyValuePair<,>);
             if (!compatible)
             {
                 try
@@ -89,17 +92,23 @@ namespace Gabriel.Cat.S.Binaris
                     Serializar.AssemblyToEnumTipoAceptado(tipo.AssemblyQualifiedName);
                     compatible = true;
                 }
-                catch {
-                    switch(tipo.AssemblyQualifiedName)
+                catch
+                {
+                    switch (tipo.AssemblyQualifiedName)
                     {
                         //poner tipos
                         default:
                             compatible = false;
                             break;
                     }
-                    if(!compatible)
+                    if (!compatible)
                     {
-                       //KeyValuePair<TKey,TValue> ->TKey && TValue are compatible type
+                        //KeyValuePair<TKey,TValue> ->TKey && TValue are compatible type
+                        if (tipoKeyValuePair.Equals(tipo.GetGenericTypeDefinition()))
+                        {
+                            tiposAux = tipo.GetGenericArguments();
+                            compatible = IsCompatible(tiposAux[0]) && IsCompatible(tiposAux[1]);
+                        }
                     }
                 }
             }
@@ -114,10 +123,9 @@ namespace Gabriel.Cat.S.Binaris
         {
             ElementoBinario elementoBinario;
             ElementoBinario elementoBinarioAux;
-            Type tipoAux;
             dynamic elementoKeyValuePair;
             Type[] tiposAux;
-            Type tipoKeyValuePair=typeof(KeyValuePair<,>);
+            Type tipoKeyValuePair = typeof(KeyValuePair<,>);
             if (IsCompatible(tipo))
             {
                 if (tipoKeyValuePair.Equals(tipo.GetGenericTypeDefinition()))//mirar si compara KeyValuePair con KeyValuePair
@@ -125,28 +133,19 @@ namespace Gabriel.Cat.S.Binaris
                     tiposAux = tipo.GetType().GetGenericArguments();
                     elementoKeyValuePair = (ElementoBinario)Activator.CreateInstance(typeof(KeyValuePairBinario<,>).MakeGenericType(tipo), new Object[] { Activator.CreateInstance(tiposAux[0]), Activator.CreateInstance(tiposAux[1]) });
                     //obtengo tipoKey
-                    
-                    tipoAux = tiposAux[0];
-                    if (tipoKeyValuePair.Equals(tipoAux.GetGenericTypeDefinition()))
-                    {
-                        elementoBinarioAux = GetElementoBinario(tipoAux);
-                    }
-                    else
-                    {
-                        elementoBinarioAux = IGetElementoBinario(tipoAux);
-                    }
+
+               
+
+                    elementoBinarioAux = IGetElementoBinario(tiposAux[0]);
+
                     elementoKeyValuePair.FormatoKey = elementoBinarioAux;
-                    tipoAux = tiposAux[1];
+                
                     //obtengo tipoValue
-                    if (tipoKeyValuePair.Equals(tipoAux.GetGenericTypeDefinition()))
-                    {
-                        elementoBinarioAux = GetElementoBinario(tipoAux);
-                    }
-                    else
-                    {
-                        elementoBinarioAux = IGetElementoBinario(tipoAux);
-                    }
+
+                    elementoBinarioAux = IGetElementoBinario(tiposAux[1]);
+
                     elementoKeyValuePair.FormatoValue = elementoBinarioAux;
+
                     elementoBinario = elementoKeyValuePair;
                 }
                 else
