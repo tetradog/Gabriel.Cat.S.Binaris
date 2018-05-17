@@ -165,8 +165,9 @@ namespace Gabriel.Cat.S.Binaris
         private static ElementoBinario IGetElementoBinario(Type tipo)
         {
             Type tipoKeyValuePair = typeof(KeyValuePair<,>);
+            Type tipoTwoKeys = typeof(TwoKeys<,>);
             ElementoBinario elementoBinario;
-            if (tipoKeyValuePair.Equals(tipo.GetGenericTypeDefinition()))
+            if (tipoKeyValuePair.Equals(tipo.GetGenericTypeDefinition())|| tipoTwoKeys.Equals(tipo.GetGenericTypeDefinition()))
             {
                 elementoBinario = GetElementoBinario(tipo);
             }
@@ -233,13 +234,6 @@ namespace Gabriel.Cat.S.Binaris
 
             }
             return elemento;
-        }
-    }
-    public interface IElementoBinarioComplejo
-    {
-        ElementoBinario Serialitzer
-        {
-            get;
         }
     }
 }
