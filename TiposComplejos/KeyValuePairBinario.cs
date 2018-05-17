@@ -6,10 +6,12 @@ using System.Text;
 
 namespace Gabriel.Cat.S.Binaris
 {
-    public class KeyValuePairBinario<TKey, TValue> : ElementoBinario
+    public class KeyValuePairBinario<TKey, TValue> : ElementoBinario,ITwoPartsElement
     {
         public ElementoBinario FormatoKey { get; set; }
         public ElementoBinario FormatoValue { get; set; }
+        ElementoBinario ITwoPartsElement.Part1 { get => FormatoKey; set => FormatoKey = value; }
+        ElementoBinario ITwoPartsElement.Part2 { get => FormatoValue; set => FormatoValue = value; }
 
         protected override byte[] IGetBytes(object obj)
         {
