@@ -98,6 +98,7 @@ namespace Gabriel.Cat.S.Binaris
                     switch (tipo.AssemblyQualifiedName)
                     {
                         //poner tipos
+                       
                         default:
                             compatible = false;
                             break;
@@ -109,6 +110,10 @@ namespace Gabriel.Cat.S.Binaris
                         {
                             tiposAux = tipo.GetGenericArguments();
                             compatible = IsCompatible(tiposAux[0]) && IsCompatible(tiposAux[1]);
+                        }else if(typeof(Enum).IsInstanceOfType(tipo))
+                        {
+                            //mirar si funciona
+                            compatible = true;
                         }
 
                     }
@@ -185,6 +190,10 @@ namespace Gabriel.Cat.S.Binaris
                         throw new ArgumentException(String.Format("El tipo tiene que tener un constructor publico sin parametros y la propiedad de {0} tener valor.", typeof(IElementoBinarioComplejo).Name));
 
                     }
+                }
+                else if(typeof(Enum).IsInstanceOfType(tipo))//mirar si va así
+                {
+                    elementoBinario =(ElementoBinario) Activator.CreateInstance(typeof(EnumBinario<>).MakeGenericType(tipo));
                 }
                 else
                 {
