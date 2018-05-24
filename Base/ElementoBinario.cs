@@ -110,7 +110,7 @@ namespace Gabriel.Cat.S.Binaris
                         {
                             tiposAux = tipo.GetGenericArguments();
                             compatible = IsCompatible(tiposAux[0]) && IsCompatible(tiposAux[1]);
-                        }else if(typeof(Enum).IsInstanceOfType(tipo))
+                        }else if(typeof(Enum).IsAssignableFrom(tipo))
                         {
                             //mirar si funciona
                             compatible = true;
@@ -191,7 +191,7 @@ namespace Gabriel.Cat.S.Binaris
 
                     }
                 }
-                else if(typeof(Enum).IsInstanceOfType(tipo))//mirar si va así
+                else if(typeof(Enum).IsAssignableFrom(tipo))//mirar si va así
                 {
                     elementoBinario =(ElementoBinario) Activator.CreateInstance(typeof(EnumBinario<>).MakeGenericType(tipo));
                 }
