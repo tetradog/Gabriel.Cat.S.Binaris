@@ -12,13 +12,14 @@ namespace Gabriel.Cat.S.Binaris
     {
         public ElementoComplejoBinario(IList<ElementoBinario> partes = null) : base(partes)
         { }
+        //por mirar
         protected override byte[] IGetBytes(object obj)
         {
-            return IGetBytes(obj);
+            return JGetBytes(obj);
         }
         protected override object IGetObject(MemoryStream bytes)
         {
-            return IGetObject(bytes);
+            return JGetObject(bytes);
         }
 
     }

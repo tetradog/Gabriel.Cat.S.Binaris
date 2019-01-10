@@ -13,7 +13,7 @@ namespace Gabriel.Cat.S.Binaris
             byte[] bytesObj;
             if (obj == null)
                 bytesObj = new byte[] { ElementoBinario.NULL };
-            else bytesObj = new byte[] { ElementoBinario.NOTNULL }.AddArray( IGetBytes(obj)); 
+            else bytesObj = new byte[] { ElementoBinario.NOTNULL }.AddArray( JGetBytes(obj)); 
 
             return bytesObj;
         }
@@ -30,7 +30,7 @@ namespace Gabriel.Cat.S.Binaris
             else if(comprobarNull==ElementoBinario.NOTNULL)
             {
                 
-                obj = IGetObject(bytes);
+                obj = JGetObject(bytes);
 
             }
             else
