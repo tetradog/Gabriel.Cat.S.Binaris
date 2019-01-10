@@ -133,18 +133,20 @@ namespace Gabriel.Cat.S.Binaris
             Type tipoTwoKeys = typeof(TwoKeys<,>);
             if (IsCompatible(tipo))
             {
-                if (tipoKeyValuePair.Equals(tipo.GetGenericTypeDefinition()))//mirar si compara KeyValuePair con KeyValuePair
-                {
-                    elementoBinario =(ElementoBinario)GetITwoPartsSerielitzer(tipo, typeof(KeyValuePairBinario<,>));
-                }
-                else if (tipoTwoKeys.Equals(tipo.GetGenericTypeDefinition()))
-                {
-                    elementoBinario = (ElementoBinario)GetITwoPartsSerielitzer(tipo, typeof(TwoKeysBinary<,>));
-                }
-                else
-                {
-                    elementoBinario = IGetElementoBinario(tipo);
-                }
+                //con string da problemas en estas comparaciones...
+                    if (tipoKeyValuePair.Equals(tipo.GetGenericTypeDefinition()))//mirar si compara KeyValuePair con KeyValuePair
+                    {
+                        elementoBinario = (ElementoBinario)GetITwoPartsSerielitzer(tipo, typeof(KeyValuePairBinario<,>));
+                    }
+                    else if (tipoTwoKeys.Equals(tipo.GetGenericTypeDefinition()))
+                    {
+                        elementoBinario = (ElementoBinario)GetITwoPartsSerielitzer(tipo, typeof(TwoKeysBinary<,>));
+                    }
+                    else
+                    {
+                        elementoBinario = IGetElementoBinario(tipo);
+                    }
+                
             }
             else elementoBinario = null;
 
