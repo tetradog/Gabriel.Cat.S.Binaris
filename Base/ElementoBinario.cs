@@ -314,7 +314,7 @@ namespace Gabriel.Cat.S.Binaris
                 if (properties[i].Uso == USONECESARIO && ElementoBinario.IsCompatible(properties[i].Tipo))
                     elementos.Add(ElementoBinario.GetElementoBinario(properties[i].Tipo));
                 else if (properties[i].Uso == USOILISTNECESARIO && (properties[i].Tipo.ImplementInterficie(typeof(IDictionary))|| properties[i].Tipo.ImplementInterficie(typeof(IDictionary<,>))))
-                {
+                {//por probar...
                     try
                     {
 
@@ -334,7 +334,7 @@ namespace Gabriel.Cat.S.Binaris
                 else if (properties[i].Uso == USOILISTNECESARIO && properties[i].Tipo.ImplementInterficie(typeof(IList))|| properties[i].Tipo.ImplementInterficie(typeof(IList<>)))
                 {
                     try
-                    {
+                    {//mirar que funcione...
 
                         list = (IList)Activator.CreateInstance(properties[i].Tipo);
                         if (ElementoBinario.IsCompatible(list.ListOfWhat()))

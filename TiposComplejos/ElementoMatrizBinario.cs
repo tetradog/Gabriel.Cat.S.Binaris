@@ -9,7 +9,7 @@ using System.Text;
 namespace Gabriel.Cat.S.Binaris
 {
     public class ElementoMatrizBinario<T> : ElementoBinarioNullable
-    {
+    {//mirar de hacer que funciones T[],T[,],T[,,]...si pudiera ser cualquier Rango mejor!!
 
         public ElementoBinario Serializador { get; set; }
         public ElementoMatrizBinario(ElementoBinario elementoMatriz)
