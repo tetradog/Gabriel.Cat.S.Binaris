@@ -121,6 +121,9 @@ namespace Gabriel.Cat.S.Binaris
                         if (tipo.IsArray && tipo.GetArrayRank() < 3)
                         {
                             compatible = IsCompatible(tipo.GetArrayType());
+                        }else if (tipo.ImplementInterficie(typeof(IList<>)))
+                        {
+                            compatible = IsCompatible(tipo.GetGenericArguments()[0]);
                         }
                         //KeyValuePair<TKey,TValue> ->TKey && TValue are compatible type
                         else if (tipoKeyValuePair.Equals(tipo.GetGenericTypeDefinition()) || tipoTwoKeys.Equals(tipo.GetGenericTypeDefinition()))
@@ -259,7 +262,7 @@ namespace Gabriel.Cat.S.Binaris
                 List<object> partes = new List<object>();
                 for (int i = 0; i < propiedades.Count; i++)
                 {
-                    if (propiedades[i].Info.Uso == USONECESARIO && ElementoBinario.IsCompatible(propiedades[i].Info.Tipo) || propiedades[i].Objeto is IList && propiedades[i].Info.Uso == USOILISTNECESARIO && ElementoBinario.IsCompatible(propiedades[i].Objeto))
+                    if (propiedades[i].Info.Uso == USONECESARIO && ElementoBinario.IsCompatible(propiedades[i].Info.Tipo) || propiedades[i].Objeto is IList && propiedades[i].Info.Uso == USOILISTNECESARIO && ElementoBinario.IsCompatible(((IList)propiedades[i].Objeto).ListOfWhat()))
                         partes.Add(propiedades[i].Objeto);
                 }
                 return partes;
@@ -278,7 +281,7 @@ namespace Gabriel.Cat.S.Binaris
                 {
                     if (propiedades[i].Info.Uso == USONECESARIO && ElementoBinario.IsCompatible(partes[j].GetType()))
                         obj.SetProperty(propiedades[i].Info.Nombre, partes[j++]);
-                    else if (propiedades[i].Info.Uso == USOILISTNECESARIO && partes[j].GetType().ImplementInterficie(typeof(IList)) && ElementoBinario.IsCompatible(partes[j]))
+                    else if (propiedades[i].Info.Uso == USOILISTNECESARIO &&( partes[j].GetType().ImplementInterficie(typeof(IList))|| partes[j].GetType().ImplementInterficie(typeof(IList<>))) && ElementoBinario.IsCompatible(partes[j]))
                     {
                         lstAPoner = partes[j++] as IList;
                         //cojo la lista del objeto y le añado la nueva
@@ -287,7 +290,7 @@ namespace Gabriel.Cat.S.Binaris
                         for (int k = 0; k < lstAPoner.Count; k++)
                             lstObj.Add(lstAPoner[k]);
                     }
-                    else if (propiedades[i].Info.Uso == USOILISTNECESARIO && partes[j].GetType().ImplementInterficie(typeof(IDictionary)) && ElementoBinario.IsCompatible(partes[j]))
+                    else if (propiedades[i].Info.Uso == USOILISTNECESARIO &&( partes[j].GetType().ImplementInterficie(typeof(IDictionary))|| partes[j].GetType().ImplementInterficie(typeof(IDictionary<,>))) && ElementoBinario.IsCompatible(partes[j]))
                     {//por probar
                         dicAPoner = partes[j++] as IDictionary;
                         //cojo la lista del objeto y le añado la nueva
@@ -309,7 +312,7 @@ namespace Gabriel.Cat.S.Binaris
             {
                 if (properties[i].Uso == USONECESARIO && ElementoBinario.IsCompatible(properties[i].Tipo))
                     elementos.Add(ElementoBinario.GetElementoBinario(properties[i].Tipo));
-                else if (properties[i].Uso == USOILISTNECESARIO && properties[i].Tipo.ImplementInterficie(typeof(IList)))
+                else if (properties[i].Uso == USOILISTNECESARIO && properties[i].Tipo.ImplementInterficie(typeof(IList))|| properties[i].Tipo.ImplementInterficie(typeof(IList<>)))
                 {
                     try
                     {

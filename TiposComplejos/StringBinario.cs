@@ -26,12 +26,8 @@ namespace Gabriel.Cat.S.Binaris
             if (obj == null)
                 throw new ArgumentException(String.Format("Se tiene que serializar {0}", typeof(string).FullName));
             IList<char> caracteres;
-            if (obj is string)
-            {
-                caracteres = obj.ToString().ToCharArray();
-            }
-            else caracteres = (IList<char>)obj;
-
+          
+            caracteres = obj.ToString().ToCharArray();
 
             return base.JGetBytes(caracteres);
         }
