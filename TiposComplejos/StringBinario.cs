@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-
+using Gabriel.Cat.S.Extension;
 namespace Gabriel.Cat.S.Binaris
 {
     public class StringBinario : ElementoIListBinario<char>
@@ -16,14 +16,15 @@ namespace Gabriel.Cat.S.Binaris
         {
         }
 
-        protected override object IGetObject(MemoryStream bytes)
+        protected override object JGetObject(MemoryStream bytes)
         {
-            return new string((char[])base.GetObject(bytes));
+            return new string((char[])base.JGetObject(bytes));
         }
 
-        protected override byte[] IGetBytes(object obj)
+        protected override byte[] JGetBytes(object obj)
         {
             string str = obj as string;
+
             if (str == null)
                 throw new ArgumentException(String.Format("Se tiene que serializar {0}", "".GetType().FullName));
             return base.GetBytes(str.ToCharArray());

@@ -30,8 +30,11 @@
 
   <ItemGroup>
     <PackageReference Include="Gabriel.Cat.S.Seguretat" Version="1.0.2.2-Preview1.0.0" />
-    <PackageReference Include="Gabriel.Cat.S.Utilitats" Version="1.0.4.3-preview1.0.7" />
-    <PackageReference Include="System.Drawing.Common" Version="4.5.0-rc1" />
+    <PackageReference Include="System.Drawing.Common" Version="4.6.0-preview.18571.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Gabriel.Cat.S.Utilitats\Gabriel.Cat.S.Utilitats\Gabriel.Cat.S.Utilitats.csproj" />
   </ItemGroup>
 
 </Project>

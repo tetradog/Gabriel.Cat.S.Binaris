@@ -11,10 +11,14 @@ namespace Gabriel.Cat.S.Binaris
         protected override byte[] IGetBytes(object obj)
         {
             byte[] bytesObj;
+            byte[] aux;
             if (obj == null)
                 bytesObj = new byte[] { ElementoBinario.NULL };
-            else bytesObj = new byte[] { ElementoBinario.NOTNULL }.AddArray( JGetBytes(obj)); 
-
+            else
+            {
+                aux = JGetBytes(obj);
+                bytesObj = new byte[] { ElementoBinario.NOTNULL }.AddArray(aux);
+            }
             return bytesObj;
         }
         protected abstract byte[] JGetBytes(object obj);
