@@ -18,7 +18,7 @@ namespace Gabriel.Cat.S.Binaris
         }
         public byte[] GetBytes(T[,] matriz)
         {
-            return JGetBytes(matriz);
+            return base.GetBytes(matriz);
         }
         protected override byte[] JGetBytes(object obj)
         {

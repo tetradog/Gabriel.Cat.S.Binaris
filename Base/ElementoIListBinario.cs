@@ -91,19 +91,7 @@ namespace Gabriel.Cat.S.Binaris
         #region implemented abstract members of ElementoBinarioNullable
         protected override byte[] JGetBytes(object obj)
         {
-            return GetBytes((IList<T>)obj);
-        }
-
-        #endregion
-
-        /// <summary>
-        /// Obtiene los bytes de la lista de elementos
-        /// </summary>
-        /// <param name="obj">IList</param>
-        /// <returns></returns>
-        public byte[] GetBytes(IList<T> lst)
-        {
-
+            IList<T> lst = obj as IList<T>;
             object[] partes = new object[lst.Count];
             byte[] longitud = null;
             byte[] bytesObjs = null;
@@ -125,7 +113,7 @@ namespace Gabriel.Cat.S.Binaris
                 case LongitudBinaria.UInt:
                     longitud = Serializar.GetBytes(Convert.ToUInt32(partes.Length));
                     break;
-             
+
                 case LongitudBinaria.MarcaFin:
                     bytesObjs = new byte[0].AddArray(partes.Casting<byte[]>());
                     if (bytesObjs.SearchArray(MarcaFin) > 0)
@@ -204,7 +192,12 @@ namespace Gabriel.Cat.S.Binaris
             if (partes == null)
                 partes = new T[0];
             return partes;
+   
         }
+
+        #endregion
+
+
 
         public static new ElementoIListBinario<T> ElementosTipoAceptado<T>(Serializar.TiposAceptados tipo)
         {
