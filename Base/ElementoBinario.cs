@@ -281,16 +281,7 @@ namespace Gabriel.Cat.S.Binaris
                 {
                     if (propiedades[i].Info.Uso == USONECESARIO && ElementoBinario.IsCompatible(partes[j].GetType()))
                         obj.SetProperty(propiedades[i].Info.Nombre, partes[j++]);
-                    else if (propiedades[i].Info.Uso == USOILISTNECESARIO &&( partes[j].GetType().ImplementInterficie(typeof(IList))|| partes[j].GetType().ImplementInterficie(typeof(IList<>))) && ElementoBinario.IsCompatible(partes[j]))
-                    {
-                        lstAPoner = partes[j++] as IList;
-                        //cojo la lista del objeto y le añado la nueva
-                        lstObj = obj.GetProperty(propiedades[i].Info.Nombre) as IList;
-
-                        for (int k = 0; k < lstAPoner.Count; k++)
-                            lstObj.Add(lstAPoner[k]);
-                    }
-                    else if (propiedades[i].Info.Uso == USOILISTNECESARIO &&( partes[j].GetType().ImplementInterficie(typeof(IDictionary))|| partes[j].GetType().ImplementInterficie(typeof(IDictionary<,>))) && ElementoBinario.IsCompatible(partes[j]))
+                    else if (propiedades[i].Info.Uso == USOILISTNECESARIO && (partes[j].GetType().ImplementInterficie(typeof(IDictionary)) || partes[j].GetType().ImplementInterficie(typeof(IDictionary<,>))) && ElementoBinario.IsCompatible(partes[j]))
                     {//por probar
                         dicAPoner = partes[j++] as IDictionary;
                         //cojo la lista del objeto y le añado la nueva
@@ -299,6 +290,16 @@ namespace Gabriel.Cat.S.Binaris
                         foreach (dynamic pair in dicAPoner)
                             dicObjs.Add(pair.Key, pair.Value);
                     }
+                    else if (propiedades[i].Info.Uso == USOILISTNECESARIO &&(propiedades[i].Info.Tipo.ImplementInterficie(typeof(IList))|| propiedades[i].Info.Tipo.ImplementInterficie(typeof(IList<>))) && ElementoBinario.IsCompatible(partes[j]))
+                    {
+                        lstAPoner = partes[j++] as IList;
+                        //cojo la lista del objeto y le añado la nueva
+                        lstObj = obj.GetProperty(propiedades[i].Info.Nombre) as IList;
+
+                        for (int k = 0; k < lstAPoner.Count; k++)
+                            lstObj.Add(lstAPoner[k]);
+                    }
+         
                 }
                 return obj;
             };
@@ -312,6 +313,24 @@ namespace Gabriel.Cat.S.Binaris
             {
                 if (properties[i].Uso == USONECESARIO && ElementoBinario.IsCompatible(properties[i].Tipo))
                     elementos.Add(ElementoBinario.GetElementoBinario(properties[i].Tipo));
+                else if (properties[i].Uso == USOILISTNECESARIO && (properties[i].Tipo.ImplementInterficie(typeof(IDictionary))|| properties[i].Tipo.ImplementInterficie(typeof(IDictionary<,>))))
+                {
+                    try
+                    {
+
+                        dic = (IDictionary)Activator.CreateInstance(properties[i].Tipo);
+                        if (ElementoBinario.IsCompatible(dic.DicOfWhat()))
+                        {
+                            //si es de un tipo compatible lo añado
+                            elementos.Add(ElementoBinario.GetElementoBinario(dic));
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new PropiedadNoCompatibleException(properties[i], ex);
+
+                    }
+                }
                 else if (properties[i].Uso == USOILISTNECESARIO && properties[i].Tipo.ImplementInterficie(typeof(IList))|| properties[i].Tipo.ImplementInterficie(typeof(IList<>)))
                 {
                     try
@@ -331,24 +350,7 @@ namespace Gabriel.Cat.S.Binaris
                     }
 
                 }
-                else if (properties[i].Uso == USOILISTNECESARIO && properties[i].Tipo.ImplementInterficie(typeof(IDictionary)))
-                {
-                    try
-                    {
-
-                        dic = (IDictionary)Activator.CreateInstance(properties[i].Tipo);
-                        if (ElementoBinario.IsCompatible(dic.DicOfWhat()))
-                        {
-                            //si es de un tipo compatible lo añado
-                            elementos.Add(ElementoBinario.GetElementoBinario(dic));
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        throw new PropiedadNoCompatibleException(properties[i], ex);
-
-                    }
-                }
+                
             }
 
 
