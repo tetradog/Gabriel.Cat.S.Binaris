@@ -118,10 +118,11 @@ namespace Gabriel.Cat.S.Binaris
                     }
                     if (!compatible)
                     {
-                        if (tipo.IsArray && tipo.GetArrayRank() < 3)
+                        if (tipo.IsArray)
                         {
                             compatible = IsCompatible(tipo.GetArrayType());
-                        }else if (tipo.ImplementInterficie(typeof(IList<>)))
+                        }
+                        else if (tipo.ImplementInterficie(typeof(IList<>)))
                         {
                             compatible = IsCompatible(tipo.GetGenericArguments()[0]);
                         }
@@ -155,207 +156,204 @@ namespace Gabriel.Cat.S.Binaris
             Type tipoTwoKeys = typeof(TwoKeys<,>);
             if (IsCompatible(tipo))
             {
-                if (tipo.Name.Contains("["))
                 {
-                    switch (tipo.GetArrayRank())
+                    if (tipo.Name.Contains("["))
                     {
-                        case 1:
-                            elementoBinario = (ElementoBinario)Activator.CreateInstance(typeof(ElementoIListBinario<>).MakeGenericType(tipo.GetArrayType()));
-                            break;
-                        case 2:
-                            elementoBinario = (ElementoBinario)Activator.CreateInstance(typeof(ElementoMatrizBinario<>).MakeGenericType(tipo.GetArrayType()),GetElementoBinario(tipo.GetArrayType() ));
-                            break;
-                        default: throw new ArgumentOutOfRangeException("el tipo sobrepasa el rango");
+
+                        elementoBinario = (ElementoBinario)Activator.CreateInstance(typeof(ElementoArrayBinario<>).MakeGenericType(tipo.GetArrayType()), GetElementoBinario(tipo.GetArrayType()));
+
                     }
 
-                }
-                //con string da problemas en estas comparaciones...
-                else if (tipo.IsGenericType&&tipoKeyValuePair.Equals(tipo.GetGenericTypeDefinition()))//mirar si compara KeyValuePair con KeyValuePair
-                {
-                    elementoBinario = (ElementoBinario)GetITwoPartsSerielitzer(tipo, typeof(KeyValuePairBinario<,>));
-                }
-                else if (tipo.IsGenericType && tipoTwoKeys.Equals(tipo.GetGenericTypeDefinition()))
-                {
-                    elementoBinario = (ElementoBinario)GetITwoPartsSerielitzer(tipo, typeof(TwoKeysBinary<,>));
+
+                    //con string da problemas en estas comparaciones...
+                    else if (tipo.IsGenericType && tipoKeyValuePair.Equals(tipo.GetGenericTypeDefinition()))//mirar si compara KeyValuePair con KeyValuePair
+                    {
+                        elementoBinario = (ElementoBinario)GetITwoPartsSerielitzer(tipo, typeof(KeyValuePairBinario<,>));
+                    }
+                    else if (tipo.IsGenericType && tipoTwoKeys.Equals(tipo.GetGenericTypeDefinition()))
+                    {
+                        elementoBinario = (ElementoBinario)GetITwoPartsSerielitzer(tipo, typeof(TwoKeysBinary<,>));
+                    }
+
+                    else
+                    {
+
+                        elementoBinario = IGetElementoBinario(tipo);
+                    }
                 }
 
-                else { 
-                
-                    elementoBinario = IGetElementoBinario(tipo);
-                }
-
-            }
+        }
             else elementoBinario = null;
 
             return elementoBinario;
         }
-        private static ITwoPartsElement GetITwoPartsSerielitzer(Type tipo, Type tipoITwopartsGeneric)
+    private static ITwoPartsElement GetITwoPartsSerielitzer(Type tipo, Type tipoITwopartsGeneric)
+    {
+        Type[] tiposAux = tipo.GetType().GetGenericArguments();
+        ITwoPartsElement elementoKeyValuePair = (ITwoPartsElement)Activator.CreateInstance(tipoITwopartsGeneric.MakeGenericType(tipo), new Object[] { Activator.CreateInstance(tiposAux[0]), Activator.CreateInstance(tiposAux[1]) });
+        //obtengo tipoKey
+        ElementoBinario elementoBinarioAux = IGetElementoBinario(tiposAux[0]);
+
+        elementoKeyValuePair.Part1 = elementoBinarioAux;
+
+        //obtengo tipoValue
+
+        elementoBinarioAux = IGetElementoBinario(tiposAux[1]);
+
+        elementoKeyValuePair.Part2 = elementoBinarioAux;
+
+        return elementoKeyValuePair;
+    }
+    private static ElementoBinario IGetElementoBinario(Type tipo)
+    {
+        Type tipoKeyValuePair = typeof(KeyValuePair<,>);
+        Type tipoTwoKeys = typeof(TwoKeys<,>);
+        ElementoBinario elementoBinario;
+        if (tipo.IsGenericType && (tipoKeyValuePair.Equals(tipo.GetGenericTypeDefinition()) || tipoTwoKeys.Equals(tipo.GetGenericTypeDefinition())))
         {
-            Type[] tiposAux = tipo.GetType().GetGenericArguments();
-            ITwoPartsElement elementoKeyValuePair = (ITwoPartsElement)Activator.CreateInstance(tipoITwopartsGeneric.MakeGenericType(tipo), new Object[] { Activator.CreateInstance(tiposAux[0]), Activator.CreateInstance(tiposAux[1]) });
-            //obtengo tipoKey
-            ElementoBinario elementoBinarioAux = IGetElementoBinario(tiposAux[0]);
-
-            elementoKeyValuePair.Part1 = elementoBinarioAux;
-
-            //obtengo tipoValue
-
-            elementoBinarioAux = IGetElementoBinario(tiposAux[1]);
-
-            elementoKeyValuePair.Part2 = elementoBinarioAux;
-
-            return elementoKeyValuePair;
+            elementoBinario = GetElementoBinario(tipo);
         }
-        private static ElementoBinario IGetElementoBinario(Type tipo)
+        else
         {
-            Type tipoKeyValuePair = typeof(KeyValuePair<,>);
-            Type tipoTwoKeys = typeof(TwoKeys<,>);
-            ElementoBinario elementoBinario;
-            if (tipo.IsGenericType&&(tipoKeyValuePair.Equals(tipo.GetGenericTypeDefinition()) || tipoTwoKeys.Equals(tipo.GetGenericTypeDefinition())))
+            if (tipo.ImplementInterficie(typeof(IElementoBinarioComplejo)))
             {
-                elementoBinario = GetElementoBinario(tipo);
+                try
+                {
+
+                    elementoBinario = ((IElementoBinarioComplejo)Activator.CreateInstance(tipo)).Serialitzer;
+                }
+                catch
+                {
+                    throw new ArgumentException(String.Format("El tipo tiene que tener un constructor publico sin parametros y la propiedad de {0} tener valor.", typeof(IElementoBinarioComplejo).Name));
+
+                }
+            }
+            else if (typeof(Enum).IsAssignableFrom(tipo))//mirar si va así
+            {
+                elementoBinario = (ElementoBinario)Activator.CreateInstance(typeof(EnumBinario<>).MakeGenericType(tipo));
             }
             else
             {
-                if (tipo.ImplementInterficie(typeof(IElementoBinarioComplejo)))
-                {
-                    try
-                    {
 
-                        elementoBinario = ((IElementoBinarioComplejo)Activator.CreateInstance(tipo)).Serialitzer;
-                    }
-                    catch
-                    {
-                        throw new ArgumentException(String.Format("El tipo tiene que tener un constructor publico sin parametros y la propiedad de {0} tener valor.", typeof(IElementoBinarioComplejo).Name));
-
-                    }
-                }
-                else if (typeof(Enum).IsAssignableFrom(tipo))//mirar si va así
-                {
-                    elementoBinario = (ElementoBinario)Activator.CreateInstance(typeof(EnumBinario<>).MakeGenericType(tipo));
-                }
-                else
-                {
-
-                    elementoBinario = ElementosTipoAceptado(Serializar.AssemblyToEnumTipoAceptado(tipo.AssemblyQualifiedName));
-                }
+                elementoBinario = ElementosTipoAceptado(Serializar.AssemblyToEnumTipoAceptado(tipo.AssemblyQualifiedName));
             }
-            return elementoBinario;
         }
-        /// <summary>
-        /// Devuelve el serializador del objeto pasado como parametro
-        /// </summary>
-        /// <param name="obj">se tendrá en cuenta si implementa IElementoBinarioComplejo.</param>
-        /// <returns>si no es compatible es null</returns>
-        public static ElementoBinario GetElementoBinario(object obj)
+        return elementoBinario;
+    }
+    /// <summary>
+    /// Devuelve el serializador del objeto pasado como parametro
+    /// </summary>
+    /// <param name="obj">se tendrá en cuenta si implementa IElementoBinarioComplejo.</param>
+    /// <returns>si no es compatible es null</returns>
+    public static ElementoBinario GetElementoBinario(object obj)
+    {
+        return GetElementoBinario(obj.GetType());
+    }
+    public static ElementoBinario GetSerializador<T>() where T : new()
+    {//añadir posibilidad de evitar la serializacion de un elemento usando atributos
+        const UsoPropiedad USONECESARIO = UsoPropiedad.Get | UsoPropiedad.Set;
+        const UsoPropiedad USOILISTNECESARIO = UsoPropiedad.Get;
+        GetPartsObjectMethod getPartsObj = (obj) =>
         {
-            return GetElementoBinario(obj.GetType());
-        }
-        public static ElementoBinario GetSerializador<T>() where T : new()
-        {//añadir posibilidad de evitar la serializacion de un elemento usando atributos
-            const UsoPropiedad USONECESARIO = UsoPropiedad.Get | UsoPropiedad.Set;
-            const UsoPropiedad USOILISTNECESARIO = UsoPropiedad.Get;
-            GetPartsObjectMethod getPartsObj = (obj) =>
+
+            IList<Propiedad> propiedades = obj.GetPropiedades();
+            List<object> partes = new List<object>();
+            for (int i = 0; i < propiedades.Count; i++)
             {
+                if (propiedades[i].Info.Uso == USONECESARIO && ElementoBinario.IsCompatible(propiedades[i].Info.Tipo) || propiedades[i].Objeto is IList && propiedades[i].Info.Uso == USOILISTNECESARIO && ElementoBinario.IsCompatible(((IList)propiedades[i].Objeto).ListOfWhat()))
+                    partes.Add(propiedades[i].Objeto);
+            }
+            return partes;
+        };
+        GetObjectMethod getObject = (partes) =>
+        {
 
-                IList<Propiedad> propiedades = obj.GetPropiedades();
-                List<object> partes = new List<object>();
-                for (int i = 0; i < propiedades.Count; i++)
-                {
-                    if (propiedades[i].Info.Uso == USONECESARIO && ElementoBinario.IsCompatible(propiedades[i].Info.Tipo) || propiedades[i].Objeto is IList && propiedades[i].Info.Uso == USOILISTNECESARIO && ElementoBinario.IsCompatible(((IList)propiedades[i].Objeto).ListOfWhat()))
-                        partes.Add(propiedades[i].Objeto);
-                }
-                return partes;
-            };
-            GetObjectMethod getObject = (partes) =>
+            T obj = new T();
+            IList<Propiedad> propiedades = obj.GetPropiedades();
+            IList lstAPoner;
+            IList lstObj;
+            IDictionary dicAPoner;
+            IDictionary dicObjs;
+
+            for (int i = 0, j = 0; i < propiedades.Count; i++)
             {
-
-                T obj = new T();
-                IList<Propiedad> propiedades = obj.GetPropiedades();
-                IList lstAPoner;
-                IList lstObj;
-                IDictionary dicAPoner;
-                IDictionary dicObjs;
-
-                for (int i = 0, j = 0; i < propiedades.Count; i++)
-                {
-                    if (propiedades[i].Info.Uso == USONECESARIO && ElementoBinario.IsCompatible(partes[j].GetType()))
-                        obj.SetProperty(propiedades[i].Info.Nombre, partes[j++]);
-                    else if (propiedades[i].Info.Uso == USOILISTNECESARIO && (partes[j].GetType().ImplementInterficie(typeof(IDictionary)) || partes[j].GetType().ImplementInterficie(typeof(IDictionary<,>))) && ElementoBinario.IsCompatible(partes[j]))
-                    {//por probar
+                if (propiedades[i].Info.Uso == USONECESARIO && ElementoBinario.IsCompatible(partes[j].GetType()))
+                    obj.SetProperty(propiedades[i].Info.Nombre, partes[j++]);
+                else if (propiedades[i].Info.Uso == USOILISTNECESARIO && (partes[j].GetType().ImplementInterficie(typeof(IDictionary)) || partes[j].GetType().ImplementInterficie(typeof(IDictionary<,>))) && ElementoBinario.IsCompatible(partes[j]))
+                {//por probar
                         dicAPoner = partes[j++] as IDictionary;
                         //cojo la lista del objeto y le añado la nueva
                         dicObjs = obj.GetProperty(propiedades[i].Info.Nombre) as IDictionary;
 
-                        foreach (dynamic pair in dicAPoner)
-                            dicObjs.Add(pair.Key, pair.Value);
-                    }
-                    else if (propiedades[i].Info.Uso == USOILISTNECESARIO &&(propiedades[i].Info.Tipo.ImplementInterficie(typeof(IList))|| propiedades[i].Info.Tipo.ImplementInterficie(typeof(IList<>))) && ElementoBinario.IsCompatible(partes[j]))
-                    {
-                        lstAPoner = partes[j++] as IList;
+                    foreach (dynamic pair in dicAPoner)
+                        dicObjs.Add(pair.Key, pair.Value);
+                }
+                else if (propiedades[i].Info.Uso == USOILISTNECESARIO && (propiedades[i].Info.Tipo.ImplementInterficie(typeof(IList)) || propiedades[i].Info.Tipo.ImplementInterficie(typeof(IList<>))) && ElementoBinario.IsCompatible(partes[j]))
+                {
+                    lstAPoner = partes[j++] as IList;
                         //cojo la lista del objeto y le añado la nueva
                         lstObj = obj.GetProperty(propiedades[i].Info.Nombre) as IList;
 
-                        for (int k = 0; k < lstAPoner.Count; k++)
-                            lstObj.Add(lstAPoner[k]);
-                    }
-         
+                    for (int k = 0; k < lstAPoner.Count; k++)
+                        lstObj.Add(lstAPoner[k]);
                 }
-                return obj;
-            };
+
+            }
+            return obj;
+        };
 
 
-            IList<PropiedadTipo> properties = typeof(T).GetPropiedadesTipos();
-            List<ElementoBinario> elementos = new List<ElementoBinario>();
-            IList list;
-            IDictionary dic;
-            for (int i = 0; i < properties.Count; i++)
-            {
-                if (properties[i].Uso == USONECESARIO && ElementoBinario.IsCompatible(properties[i].Tipo))
-                    elementos.Add(ElementoBinario.GetElementoBinario(properties[i].Tipo));
-                else if (properties[i].Uso == USOILISTNECESARIO && (properties[i].Tipo.ImplementInterficie(typeof(IDictionary))|| properties[i].Tipo.ImplementInterficie(typeof(IDictionary<,>))))
-                {//por probar...
-                    try
-                    {
-
-                        dic = (IDictionary)Activator.CreateInstance(properties[i].Tipo);
-                        if (ElementoBinario.IsCompatible(dic.DicOfWhat()))
-                        {
-                            //si es de un tipo compatible lo añado
-                            elementos.Add(ElementoBinario.GetElementoBinario(dic));
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        throw new PropiedadNoCompatibleException(properties[i], ex);
-
-                    }
-                }
-                else if (properties[i].Uso == USOILISTNECESARIO && properties[i].Tipo.ImplementInterficie(typeof(IList))|| properties[i].Tipo.ImplementInterficie(typeof(IList<>)))
+        IList<PropiedadTipo> properties = typeof(T).GetPropiedadesTipos();
+        List<ElementoBinario> elementos = new List<ElementoBinario>();
+        IList list;
+        IDictionary dic;
+        for (int i = 0; i < properties.Count; i++)
+        {
+            if (properties[i].Uso == USONECESARIO && ElementoBinario.IsCompatible(properties[i].Tipo))
+                elementos.Add(ElementoBinario.GetElementoBinario(properties[i].Tipo));
+            else if (properties[i].Uso == USOILISTNECESARIO && (properties[i].Tipo.ImplementInterficie(typeof(IDictionary)) || properties[i].Tipo.ImplementInterficie(typeof(IDictionary<,>))))
+            {//por probar...
+                try
                 {
-                    try
-                    {//mirar que funcione...
 
-                        list = (IList)Activator.CreateInstance(properties[i].Tipo);
-                        if (ElementoBinario.IsCompatible(list.ListOfWhat()))
-                        {
-                            //si es de un tipo compatible lo añado
-                            elementos.Add(ElementoBinario.GetElementoBinario(list));
-                        }
-                    }
-                    catch (Exception ex)
+                    dic = (IDictionary)Activator.CreateInstance(properties[i].Tipo);
+                    if (ElementoBinario.IsCompatible(dic.DicOfWhat()))
                     {
-                        throw new PropiedadNoCompatibleException(properties[i], ex);
-
+                        //si es de un tipo compatible lo añado
+                        elementos.Add(ElementoBinario.GetElementoBinario(dic));
                     }
+                }
+                catch (Exception ex)
+                {
+                    throw new PropiedadNoCompatibleException(properties[i], ex);
 
                 }
-                
+            }
+            else if (properties[i].Uso == USOILISTNECESARIO && properties[i].Tipo.ImplementInterficie(typeof(IList)) || properties[i].Tipo.ImplementInterficie(typeof(IList<>)))
+            {
+                try
+                {//mirar que funcione...
+
+                    list = (IList)Activator.CreateInstance(properties[i].Tipo);
+                    if (ElementoBinario.IsCompatible(list.ListOfWhat()))
+                    {
+                        //si es de un tipo compatible lo añado
+                        elementos.Add(ElementoBinario.GetElementoBinario(list));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw new PropiedadNoCompatibleException(properties[i], ex);
+
+                }
+
             }
 
-
-
-            return new ElementoComplejoBinarioNullableExt(elementos, getPartsObj, getObject);
         }
+
+
+
+        return new ElementoComplejoBinarioNullableExt(elementos, getPartsObj, getObject);
     }
+}
 }

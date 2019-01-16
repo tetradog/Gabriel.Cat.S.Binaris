@@ -8,29 +8,25 @@ using System.Text;
 
 namespace Gabriel.Cat.S.Binaris
 {
-    public class ElementoMatrizBinario<T> : ElementoBinarioNullable
+    public class ElementoArrayBinario<T> : ElementoBinarioNullable
     {//mirar de hacer que funciones T[],T[,],T[,,]...si pudiera ser cualquier Rango mejor!!
 
         public ElementoBinario Serializador { get; set; }
-        public ElementoMatrizBinario(ElementoBinario elementoMatriz)
+        public ElementoArrayBinario(ElementoBinario elementoMatriz)
         {
             Serializador = elementoMatriz;
         }
-        public byte[] GetBytes(T[,] matriz)
-        {
-            return base.GetBytes(matriz);
-        }
+        
         protected override byte[] JGetBytes(object obj)
         {
-            T[,] matriz = (T[,])obj;
+            Array matriz = (Array)obj;
             List<byte[]> datosMatriz=new List<byte[]>();
-            datosMatriz.Add(Serializar.GetBytes(matriz.GetLength(DimensionMatriz.X)));
-            datosMatriz.Add(Serializar.GetBytes(matriz.GetLength(DimensionMatriz.Y)));
-            for(int y=0,xF= matriz.GetLength(DimensionMatriz.X),yF= matriz.GetLength(DimensionMatriz.Y);y<yF;y++)
-            {
-                for (int x = 0; x < xF; x++)
-                    datosMatriz.Add(Serializador.GetBytes(matriz[x, y]));
-            }
+            int[] dimensiones = matriz.GetDimensiones();
+            datosMatriz.Add(Serializar.GetBytes(matriz.Rank));
+            for (int i = 0; i < matriz.Rank; i++)
+                datosMatriz.Add(Serializar.GetBytes(dimensiones[i]));
+            for (int i = 0, f = matriz.Length; i < f; i++)
+                datosMatriz.Add(Serializador.GetBytes(matriz.GetValue(dimensiones,i)));
             return new byte[0].AddArray(datosMatriz.ToArray());
         }
 
@@ -38,10 +34,14 @@ namespace Gabriel.Cat.S.Binaris
         protected override object JGetObject(MemoryStream bytes)
         {
 
-            T[,] matriz = new T[Serializar.ToInt(bytes.Read(sizeof(int))), Serializar.ToInt(bytes.Read(sizeof(int)))];
-            for (int y = 0, xF = matriz.GetLength(DimensionMatriz.X), yF = matriz.GetLength(DimensionMatriz.Y); y < yF; y++)
-                for (int x = 0; x < xF; x++)
-                    matriz[x, y] =(T) Serializador.GetObject(bytes);
+            int rank = Serializar.ToInt(bytes.Read(sizeof(int)));
+            int[] dimensiones = new int[rank];
+            Array matriz = null;
+            for(int i=0;i<dimensiones.Length;i++)
+                dimensiones[i]= Serializar.ToInt(bytes.Read(sizeof(int)));
+            matriz= Array.CreateInstance(typeof(T), dimensiones);
+            for (int i = 0, f = matriz.Length; i < f; i++)
+                matriz.SetValue(dimensiones,i,Serializador.GetObject(bytes));
             return matriz;
         }
     }
