@@ -33,7 +33,6 @@ namespace Gabriel.Cat.S.Binaris
         
         protected override object JGetObject(MemoryStream bytes)
         {
-
             int rank = Serializar.ToInt(bytes.Read(sizeof(int)));
             int[] dimensiones = new int[rank];
             Array matriz = null;
