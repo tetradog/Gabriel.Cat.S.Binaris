@@ -11,7 +11,7 @@
     <FileVersion>1.0.0.1</FileVersion>
     <AssemblyVersion>1.0.0.1</AssemblyVersion>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>1.0.5-preview1.0.8</Version>
+    <Version>1.0.5-preview1.0.9</Version>
     <Authors>Gabriel.Cat.Developer</Authors>
     <Company>Gabriel.Cat.Developer</Company>
     <Description>Sirve para serializar fácilmente.</Description>
@@ -29,9 +29,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Gabriel.Cat.S.Seguretat" Version="1.0.2.2-Preview1.0.1" />
-    <PackageReference Include="Gabriel.Cat.S.Utilitats" Version="1.0.4.4-preview1.0.5" />
-    <PackageReference Include="System.Drawing.Common" Version="4.6.0-preview6.19303.8" />
+    <PackageReference Include="Gabriel.Cat.S.Seguretat" Version="1.0.2.2-Preview1.0.4" />
+    <PackageReference Include="Gabriel.Cat.S.Utilitats" Version="1.0.4.4-preview1.0.6" />
+    <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
   </ItemGroup>
 
 </Project>
