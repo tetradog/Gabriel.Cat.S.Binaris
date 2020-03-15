@@ -31,6 +31,8 @@ namespace Gabriel.Cat.S.Binaris
             //tipos genericos
             DicTiposGenericos.Add(typeof(KeyValuePair<,>).AssemblyQualifiedName, typeof(KeyValuePairBinario<,>).AssemblyQualifiedName);
             DicTiposGenericos.Add(typeof(TwoKeys<,>).AssemblyQualifiedName, typeof(TwoKeysBinario<,>).AssemblyQualifiedName);
+            DicTiposGenericos.Add(typeof(Array).AssemblyQualifiedName, typeof(ElementoArrayBinario<>).AssemblyQualifiedName);
+
         }
         public Key Key { get; set; }
         public byte[] GetBytes()
@@ -96,16 +98,22 @@ namespace Gabriel.Cat.S.Binaris
         
         {
             IList<PropiedadTipo> propiedades;
-            IList<ElementoBinario> partes;
+            IList<ElementoBinario> serializadorPartes;
             GetPartsObjectMethod getParts;
             GetObjectMethod getObject;
-          
+
             if (MetodoNew == null)
+            {
                 MetodoNew = (GetEmtpyNewObject<T>)(() => { return (T)typeof(T).GetObj(); });
-           
+                try
+                {
+                    MetodoNew();//asi no se tiene que probar el serializador para saber que no funciona, al obtenero ya se veria el problema
+                }
+                catch (Exception e){ throw e; }
+            }
             propiedades =GetPropiedadesCompatibles(typeof(T).GetPropiedadesTipos());
        
-            partes = GetPartes(propiedades);
+            serializadorPartes = GetSerializadorPartes(propiedades);
             getParts=(obj)=>GetPartes(obj,propiedades);
             getObject = (iPartes) => {
                  T obj= MetodoNew();
@@ -115,7 +123,7 @@ namespace Gabriel.Cat.S.Binaris
             
             };
 
-            return new ElementoComplejoBinarioNullableExt(partes,getParts,getObject);
+            return new ElementoComplejoBinarioNullableExt(serializadorPartes,getParts,getObject);
         }
 
        
@@ -138,7 +146,7 @@ namespace Gabriel.Cat.S.Binaris
             return partes;
         }
 
-        private static IList<ElementoBinario> GetPartes(IList<PropiedadTipo> propiedades)
+        private static IList<ElementoBinario> GetSerializadorPartes(IList<PropiedadTipo> propiedades)
         {
             return propiedades.Select((p) => GetElementoBinario(p.Tipo)).ToList();
         }
@@ -153,8 +161,10 @@ namespace Gabriel.Cat.S.Binaris
         private static ElementoBinario GetElementoBinario(Type tipo)
         {
             ElementoBinario elemento;
-
-            if(Gabriel.Cat.S.Utilitats.Serializar.AsseblyQualifiedName.Contains(tipo.AssemblyQualifiedName))
+            Type generic;
+            Type[] parametros;
+            Type serialitzerType;
+            if(Serializar.AsseblyQualifiedName.Contains(tipo.AssemblyQualifiedName))
             {
                 elemento = ElementoBinario.ElementoTipoAceptado(Serializar.AssemblyToEnumTipoAceptado(tipo.AssemblyQualifiedName));
             }else if (tipo.ImplementInterficie(typeof(IElementoBinarioComplejo)))
@@ -163,9 +173,19 @@ namespace Gabriel.Cat.S.Binaris
             }
             else
             {
-
-                //es un tipo mio
-                elemento = null;
+                if (tipo.IsGenericType)
+                {//falta mirar que funcione así... ej KeyValuePair<long,CrazyKey>, TwoKeys<IdUnico,string>
+                    //me falta la parte de Array??
+                    //me falta la parte de IList y IDictionary
+                    generic = tipo.GetGenericTypeDefinition();
+                    parametros = tipo.GetGenericArguments();
+                    serialitzerType = Type.GetType(DicTiposGenericos[generic.AssemblyQualifiedName]);
+                    elemento = (ElementoBinario) serialitzerType.GetObj(parametros.Select((p) => GetElementoBinario(p)).ToArray());
+                }
+                else
+                {
+                    elemento = DicTipos[tipo.AssemblyQualifiedName];
+                }
             }
             return elemento;
         }
