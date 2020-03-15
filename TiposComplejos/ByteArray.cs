@@ -13,5 +13,9 @@ namespace Gabriel.Cat.S.Binaris
         public ByteArrayBinario( byte[] marcaFin) : base(new ElementoBinarioTamañoFijo(Utilitats.Serializar.TiposAceptados.Byte), marcaFin)
         {
         }
+        public override string ToString()
+        {
+            return "TipoDatos=ByteArray";
+        }
     }
 }

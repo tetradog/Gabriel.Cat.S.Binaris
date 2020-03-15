@@ -199,9 +199,9 @@ namespace Gabriel.Cat.S.Binaris
 
 
 
-        public static new ElementoIListBinario<T> ElementosTipoAceptado<T>(Serializar.TiposAceptados tipo)
+        public static ElementoIListBinario<T> ElementosTipoAceptado(Serializar.TiposAceptados tipo)
         {
-            return new ElementoIListBinario<T>(ElementoBinario.ElementosTipoAceptado(tipo));
+            return new ElementoIListBinario<T>(ElementoBinario.ElementoTipoAceptado(tipo));
         }
     }
 

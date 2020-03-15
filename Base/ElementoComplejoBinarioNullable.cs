@@ -36,15 +36,15 @@ namespace Gabriel.Cat.S.Binaris
         protected override byte[] JGetBytes(object obj)
         {
             IList partesObj = IGetPartsObject(obj);
-            object[] bytesPartes;
+            List<byte[]> bytesPartes;
 
             if (partesObj.Count != partes.Count)
                 throw new ArgumentException(String.Format("El numero de partes no coincide con las partes del {0}", GetType().FullName), "obj");
 
-            bytesPartes = new object[partes.Count];
+            bytesPartes = new List<byte[]>();
             for (int i = 0; i < partes.Count; i++)
-                bytesPartes[i] = partes[i].GetBytes(partesObj[i]);
-            return new byte[0].AddArray(bytesPartes.Casting<byte[]>());
+                bytesPartes.Add(partes[i].GetBytes(partesObj[i]));
+            return new byte[0].AddArray(bytesPartes.ToArray());
 
         }
         protected abstract IList IGetPartsObject(object obj);

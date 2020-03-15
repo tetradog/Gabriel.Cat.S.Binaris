@@ -29,5 +29,9 @@ namespace Gabriel.Cat.S.Binaris
                 dic.Add(partes[i]);
             return dic;
         }
+        public override string ToString()
+        {
+            return $"TipoDatos=DiccionarioBinario<{typeof(TKey).Name},{typeof(TValue).Name}>";
+        }
     }
 }

@@ -43,5 +43,9 @@ namespace Gabriel.Cat.S.Binaris
                 matriz.SetValue(dimensiones,i,Serializador.GetObject(bytes));
             return matriz;
         }
+        public override string ToString()
+        {
+            return "TipoDatos=MatrizBinario";
+        }
     }
 }

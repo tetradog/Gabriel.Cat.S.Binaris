@@ -30,14 +30,18 @@ namespace Gabriel.Cat.S.Binaris
             ckey.CrazyItems.AddRange((CrazyKey.CrazyItem[])base.GetObject(bytes));
             return ckey;
         }
+        public override string ToString()
+        {
+            return "TipoDatos=CrazyKey";
+        }
     }
     public class CrazyItemBinario : ElementoComplejoBinario
     {
         public CrazyItemBinario()
         {
-            Partes.Add(ElementoBinario.ElementosTipoAceptado(Utilitats.Serializar.TiposAceptados.Byte));
-            Partes.Add(ElementoBinario.ElementosTipoAceptado(Utilitats.Serializar.TiposAceptados.Byte));
-            Partes.Add(ElementoBinario.ElementosTipoAceptado(Utilitats.Serializar.TiposAceptados.Byte));
+            Partes.Add(ElementoBinario.ElementoTipoAceptado(Utilitats.Serializar.TiposAceptados.Byte));
+            Partes.Add(ElementoBinario.ElementoTipoAceptado(Utilitats.Serializar.TiposAceptados.Byte));
+            Partes.Add(ElementoBinario.ElementoTipoAceptado(Utilitats.Serializar.TiposAceptados.Byte));
         }
         protected override IList IGetPartsObject(object obj)
         {
@@ -53,6 +57,10 @@ namespace Gabriel.Cat.S.Binaris
             cKeyItem.DataMethods = (CrazyKey.CrazyItem.MetodoEncrypt)(byte)partes[1];
             cKeyItem.PasswordMethods = (CrazyKey.CrazyItem.MetodoEncrypt)(byte)partes[2];
             return cKeyItem;
+        }
+        public override string ToString()
+        {
+            return "TipoDatos=CrazyItem";
         }
     }
 }

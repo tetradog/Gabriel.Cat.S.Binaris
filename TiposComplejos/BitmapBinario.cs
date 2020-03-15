@@ -12,7 +12,7 @@ namespace Gabriel.Cat.S.Binaris
     {
         public BitmapBinario()
         {
-            Partes.Add(new ElementoIListBinario<byte>(ElementosTipoAceptado(Serializar.TiposAceptados.Byte)));
+            Partes.Add(new ByteArrayBinario());
         }
 
 
@@ -32,7 +32,8 @@ namespace Gabriel.Cat.S.Binaris
         protected override object JGetObject(MemoryStream bytes)
         {
 
-            byte[] bytesBmp = (byte[])((base.GetPartsObject(bytes))[0]);
+            byte[] bytesBmp = (byte[])base.GetPartsObject(bytes)[0];
+
             Bitmap bmp;
             try
             {

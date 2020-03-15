@@ -25,7 +25,12 @@ namespace Gabriel.Cat.S.Binaris
         protected override object JGetObject(MemoryStream bytes)
         {
             object[] partes = GetPartsObject(bytes);
-            return new Key((Key.ItemKey[])partes[1], new IdUnico((byte[])partes[0]));
+            Key key = (Key)partes[1];
+            return new Key(key.ItemsKey,new IdUnico((byte[])partes[0]));
+        }
+        public override string ToString()
+        {
+            return "TipoDatos=KeyBinarioConId";
         }
     }
     public class KeyBinario : ElementoIListBinario<ItemBinario>
@@ -49,14 +54,18 @@ namespace Gabriel.Cat.S.Binaris
         {
             return new Key((Key.ItemKey[])base.GetObject(bytes));
         }
+        public override string ToString()
+        {
+            return "TipoDatos=KeyBinario";
+        }
     }
     public class ItemBinario : ElementoComplejoBinario
     {
         public ItemBinario()
         {
-            Partes.Add(ElementoBinario.ElementosTipoAceptado(Utilitats.Serializar.TiposAceptados.Int));
-            Partes.Add(ElementoBinario.ElementosTipoAceptado(Utilitats.Serializar.TiposAceptados.Int));
-            Partes.Add(ElementoBinario.ElementosTipoAceptado(Utilitats.Serializar.TiposAceptados.String));
+            Partes.Add(ElementoBinario.ElementoTipoAceptado(Utilitats.Serializar.TiposAceptados.Int));
+            Partes.Add(ElementoBinario.ElementoTipoAceptado(Utilitats.Serializar.TiposAceptados.Int));
+            Partes.Add(ElementoBinario.ElementoTipoAceptado(Utilitats.Serializar.TiposAceptados.String));
         }
         protected override IList IGetPartsObject(object obj)
         {
@@ -69,6 +78,10 @@ namespace Gabriel.Cat.S.Binaris
             object[] partes = GetPartsObject(bytes);
             return new Key.ItemKey((int)partes[0], (int)partes[1], (string)partes[2]);
 
+        }
+        public override string ToString()
+        {
+            return "TipoDatos=ItemKeyBinario";
         }
     }
 }

@@ -8,11 +8,11 @@ namespace Gabriel.Cat.S.Binaris
 {
     public class StringBinario : ElementoIListBinario<char>
     {
-        public StringBinario(LongitudBinaria longitud= LongitudBinaria.UInt) : base(ElementoBinario.ElementosTipoAceptado(Serializar.TiposAceptados.Char), longitud)
+        public StringBinario(LongitudBinaria longitud= LongitudBinaria.UInt) : base(ElementoBinario.ElementoTipoAceptado(Serializar.TiposAceptados.Char), longitud)
         {
         }
 
-        public StringBinario(byte[] marcaFin) : base(ElementoBinario.ElementosTipoAceptado(Serializar.TiposAceptados.Char), marcaFin)
+        public StringBinario(byte[] marcaFin) : base(ElementoBinario.ElementoTipoAceptado(Serializar.TiposAceptados.Char), marcaFin)
         {
         }
 

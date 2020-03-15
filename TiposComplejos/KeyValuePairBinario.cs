@@ -1,27 +1,29 @@
 ﻿using Gabriel.Cat.S.Extension;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
 namespace Gabriel.Cat.S.Binaris
 {
-    public class KeyValuePairBinario<TKey, TValue> : ElementoBinario,ITwoPartsElement
+    public class KeyValuePairBinario<TKey, TValue> : ElementoComplejoBinario
     {
-        public ElementoBinario FormatoKey { get; set; }
-        public ElementoBinario FormatoValue { get; set; }
-        ElementoBinario ITwoPartsElement.Part1 { get => FormatoKey; set => FormatoKey = value; }
-        ElementoBinario ITwoPartsElement.Part2 { get => FormatoValue; set => FormatoValue = value; }
-
-        protected override byte[] IGetBytes(object obj)
+        public KeyValuePairBinario(ElementoBinario serializadorTKey,ElementoBinario serializadorTValue):base(new ElementoBinario[] {serializadorTKey,serializadorTValue }) { }
+        protected override IList IGetPartsObject(object obj)
         {
-            KeyValuePair<TKey, TValue> keyValuePair = (KeyValuePair<TKey, TValue>)obj;
-            return new byte[0].AddArray(FormatoKey.GetBytes(keyValuePair.Key), FormatoValue.GetBytes(keyValuePair.Value));
+            KeyValuePair<TKey, TValue> pair = (KeyValuePair<TKey, TValue>)obj;
+            return new object[] { pair.Key, pair.Value };
         }
 
-        protected override object IGetObject(MemoryStream bytes)
+        protected override object JGetObject(MemoryStream bytes)
         {
-            return new KeyValuePair<TKey, TValue>((TKey)FormatoKey.GetObject(bytes), (TValue)FormatoValue.GetObject(bytes));
+            object[] partes = GetPartsObject(bytes);
+            return new KeyValuePair<TKey, TValue>((TKey)partes[0], (TValue)partes[1]);
+        }
+        public override string ToString()
+        {
+            return $"TipoDatos=KeyValuePair<{typeof(TKey).Name},{typeof(TValue).Name}>Binario";
         }
     }
 }
