@@ -20,7 +20,30 @@ namespace Gabriel.Cat.S.Binaris
         ElementoBinario Elemento
         { get; set; }
     }
-    public class ElementoIListBinario<T> : ElementoBinarioNullable, IElementoBinarioIList
+    public class ElementoIListBinario<T> : ElementoIListBinario<List<T>,T>
+    {
+        public ElementoIListBinario(ElementoBinario elemento) : base(elemento)
+        {
+        }
+
+        public ElementoIListBinario(ElementoBinario elemento, LongitudBinaria unidadCantidadElementos) : base(elemento, unidadCantidadElementos)
+        {
+        }
+
+        public ElementoIListBinario(ElementoBinario elemento, byte[] marcaFin) : base(elemento, marcaFin)
+        {
+        }
+        protected override object JGetObject(MemoryStream bytes)
+        {
+            return ((List<T>)base.JGetObject(bytes)).ToArray();
+        }
+
+        public static ElementoIListBinario<T> ElementosTipoAceptado(Serializar.TiposAceptados tipo)
+        {
+            return new ElementoIListBinario<T>(ElementoBinario.ElementoTipoAceptado(tipo));
+        }
+    }
+        public class ElementoIListBinario<TList,T> : ElementoBinarioNullable, IElementoBinarioIList where TList:class,IList,new()
     {
 
 
@@ -30,8 +53,9 @@ namespace Gabriel.Cat.S.Binaris
 
         ElementoBinario elemento;
 
-
-        public ElementoIListBinario(ElementoBinario elemento, LongitudBinaria unidadCantidadElementos = LongitudBinaria.UInt)
+        public ElementoIListBinario(ElementoBinario elemento):this(elemento,LongitudBinaria.UInt)
+        { }
+            public ElementoIListBinario(ElementoBinario elemento, LongitudBinaria unidadCantidadElementos )
         {
             Elemento = elemento;
             MarcaFin = null;
@@ -133,13 +157,13 @@ namespace Gabriel.Cat.S.Binaris
 
             //la marca fin y la longitud Que Se usara  y el elemento es el minimo...
             ulong? numItems = null;
-            List<T> objects = new List<T>();
+            TList objects = new TList();
             Llista<byte> compruebaBytes = new Llista<byte>();
             List<byte> bytesElementoMarcaFin = new List<byte>();
             byte[] bufferStreamBytes, bytesObj;
             object objHaPoner;
             int posMarcaFin;
-            T[] partes = null;
+            TList partes = null;
 
             switch (Longitud)
             {
@@ -155,10 +179,10 @@ namespace Gabriel.Cat.S.Binaris
             }
             if (numItems.HasValue)
             {
-                partes = new T[numItems.Value];
+                partes = new TList();
                 for (ulong i = 0, f = numItems.Value; i < f; i++)
                 {
-                    partes[i] = (T)Elemento.GetObject(bytes);
+                    partes.Add((T)Elemento.GetObject(bytes));
                 }
             }
             else
@@ -184,26 +208,26 @@ namespace Gabriel.Cat.S.Binaris
                     }
                     while (objHaPoner != null && !bytes.EndOfStream());
                     if (objects.Count != 0)
-                        partes = objects.ToArray();
+                        partes = objects;
                 }
                 else
                     throw new FormatException("No se ha encontrado la marca de fin");
 
             }
             if (partes == null)
-                partes = new T[0];
+                partes = new TList();
             return partes;
    
         }
 
         #endregion
 
-
-
-        public static ElementoIListBinario<T> ElementosTipoAceptado(Serializar.TiposAceptados tipo)
+        public override string ToString()
         {
-            return new ElementoIListBinario<T>(ElementoBinario.ElementoTipoAceptado(tipo));
+            return $"Lista de {typeof(T).Name}";
         }
+
+       
     }
 
 }

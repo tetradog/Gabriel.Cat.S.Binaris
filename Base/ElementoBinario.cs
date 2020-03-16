@@ -39,7 +39,8 @@ namespace Gabriel.Cat.S.Binaris
             //IDictionary<TKey,TValue>
             DicTiposGenericos.Add(typeof(IDictionary<,>).AssemblyQualifiedName, typeof(DictionaryBinary<,,>).AssemblyQualifiedName);
             //IList<T>
-            DicTiposGenericos.Add(typeof(IList<>).AssemblyQualifiedName, typeof(ElementoIListBinario<>).AssemblyQualifiedName);
+            DicTiposGenericos.Add(typeof(IList<>).AssemblyQualifiedName, typeof(ElementoIListBinario<,>).AssemblyQualifiedName);
+
         }
         public Key Key { get; set; }
         public byte[] GetBytes()
@@ -73,6 +74,17 @@ namespace Gabriel.Cat.S.Binaris
                 bytesObj = (byte[])byteArrayBinario.GetObject(bytes);
                 bytes = new MemoryStream(Key.Decrypt(bytesObj));
             }
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
             return IGetObject(bytes);
         }
 
@@ -178,7 +190,7 @@ namespace Gabriel.Cat.S.Binaris
                 dic = aux as IDictionary;
                 if (dic != null)
                 {
-                    aux = dic.ToArray();
+                    aux =Extension.ToArray(dic);
                 }
                 else
                 {
@@ -225,9 +237,7 @@ namespace Gabriel.Cat.S.Binaris
             else
             {
                 if (tipo.IsGenericType)
-                {//falta mirar que funcione así... ej KeyValuePair<long,CrazyKey>, TwoKeys<IdUnico,string>
-                 //me falta la parte de Array??
-                 //me falta la parte de IList y IDictionary
+                {
                     generic = tipo.GetGenericTypeDefinition();
                     parametros = tipo.GetGenericArguments();
                     parametrosSerializador = parametros;
@@ -240,11 +250,16 @@ namespace Gabriel.Cat.S.Binaris
                     else if (generic.ImplementInterficie(typeof(IList)))
                     {
                         generic = typeof(IList<>);
-                 
+                        parametros = new Type[] { tipo }.AfegirValors(parametros).ToArray();
                     }
 
                     serialitzerType = Type.GetType(DicTiposGenericos[generic.AssemblyQualifiedName]).SetTypes(parametros);
                     elemento = (ElementoBinario) serialitzerType.GetObj(parametrosSerializador.Select((p) => GetElementoBinario(p)).ToArray());
+                }
+                else if (tipo.IsArray)
+                {
+                    serialitzerType = typeof(ElementoArrayBinario<>).SetTypes(tipo.GetElementType());
+                    elemento = (ElementoBinario)serialitzerType.GetObj(GetElementoBinario(tipo.GetElementType()));
                 }
                 else
                 {

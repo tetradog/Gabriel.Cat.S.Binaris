@@ -1,6 +1,8 @@
 ﻿using Gabriel.Cat.S.Extension;
 using Gabriel.Cat.S.Utilitats;
+
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -19,7 +21,7 @@ namespace Gabriel.Cat.S.Binaris
         
         protected override byte[] JGetBytes(object obj)
         {
-            Array matriz = (Array)obj;
+            Array matriz = (Array)(obj is IList<T>?Gabriel.Cat.S.Extension.ExtensionIList.ToArray((IList)obj):obj);
             List<byte[]> datosMatriz=new List<byte[]>();
             int[] dimensiones = matriz.GetDimensiones();
             datosMatriz.Add(Serializar.GetBytes(matriz.Rank));
@@ -33,19 +35,24 @@ namespace Gabriel.Cat.S.Binaris
         
         protected override object JGetObject(MemoryStream bytes)
         {
+            Array matriz;
+
             int rank = Serializar.ToInt(bytes.Read(sizeof(int)));
             int[] dimensiones = new int[rank];
-            Array matriz = null;
+           
             for(int i=0;i<dimensiones.Length;i++)
                 dimensiones[i]= Serializar.ToInt(bytes.Read(sizeof(int)));
+
             matriz= Array.CreateInstance(typeof(T), dimensiones);
+
             for (int i = 0, f = matriz.Length; i < f; i++)
                 matriz.SetValue(dimensiones,i,Serializador.GetObject(bytes));
+
             return matriz;
         }
         public override string ToString()
         {
-            return "TipoDatos=MatrizBinario";
+            return $"TipoDatos={typeof(T).Name}MatrizBinario";
         }
     }
 }

@@ -10,10 +10,13 @@ namespace Gabriel.Cat.S.Binaris
          where T :class,  IDictionary<TKey, TValue>,  new()
 
     {
-        public DictionaryBinary(ElementoBinario serializadorKey,ElementoBinario serializadorValue) : base(new KeyValuePairBinario<TKey, TValue>(serializadorKey,serializadorValue),LongitudBinaria.UInt)
+        public DictionaryBinary(ElementoBinario serializadorKey,ElementoBinario serializadorValue) : this(serializadorKey,serializadorValue,LongitudBinaria.UInt)
         {
         }
 
+        public DictionaryBinary(ElementoBinario serializadorKey, ElementoBinario serializadorValue,LongitudBinaria longitud) : base(new KeyValuePairBinario<TKey, TValue>(serializadorKey, serializadorValue), longitud)
+        {
+        }
 
         protected override byte[] JGetBytes(object obj)
         {

@@ -30,7 +30,7 @@ namespace Gabriel.Cat.S.Binaris
 
         protected override object IGetObject(MemoryStream bytes)
         {
-            byte[] data = new byte[Serializar.ToInt(bytes.Read(4))];
+            byte[] data = new byte[Serializar.ToInt(bytes.Read(sizeof(int)))];
             bytes.Read(data, 0, data.Length);
             return data;
         }
