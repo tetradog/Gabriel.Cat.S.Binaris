@@ -75,16 +75,6 @@ namespace Gabriel.Cat.S.Binaris
                 bytes = new MemoryStream(Key.Decrypt(bytesObj));
             }
             
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
             return IGetObject(bytes);
         }
 
