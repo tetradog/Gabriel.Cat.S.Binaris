@@ -37,7 +37,9 @@ namespace Gabriel.Cat.S.Binaris
             DicTiposGenericos.Add(typeof(TwoKeys<,>).AssemblyQualifiedName, typeof(TwoKeysBinario<,>).AssemblyQualifiedName);
             DicTiposGenericos.Add(typeof(Array).AssemblyQualifiedName, typeof(ElementoArrayBinario<>).AssemblyQualifiedName);
             //IDictionary<TKey,TValue>
+            DicTiposGenericos.Add(typeof(IDictionary<,>).AssemblyQualifiedName, typeof(DictionaryBinary<,,>).AssemblyQualifiedName);
             //IList<T>
+            DicTiposGenericos.Add(typeof(IList<>).AssemblyQualifiedName, typeof(ElementoIListBinario<>).AssemblyQualifiedName);
         }
         public Key Key { get; set; }
         public byte[] GetBytes()
@@ -202,11 +204,12 @@ namespace Gabriel.Cat.S.Binaris
 
 
 
-        private static ElementoBinario GetElementoBinario(Type tipo)
+        public static ElementoBinario GetElementoBinario(Type tipo)
         {
             ElementoBinario elemento;
             Type generic;
             Type[] parametros;
+            Type[] parametrosSerializador;
             Type serialitzerType;
 
             if(DicTiposBasicos.ContainsKey(tipo.AssemblyQualifiedName))
@@ -223,12 +226,25 @@ namespace Gabriel.Cat.S.Binaris
             {
                 if (tipo.IsGenericType)
                 {//falta mirar que funcione así... ej KeyValuePair<long,CrazyKey>, TwoKeys<IdUnico,string>
-                    //me falta la parte de Array??
-                    //me falta la parte de IList y IDictionary
+                 //me falta la parte de Array??
+                 //me falta la parte de IList y IDictionary
                     generic = tipo.GetGenericTypeDefinition();
                     parametros = tipo.GetGenericArguments();
+                    parametrosSerializador = parametros;
+                    if (generic.ImplementInterficie(typeof(IDictionary)))
+                    {
+                        generic = typeof(IDictionary<,>);
+                        parametros = new Type[] { tipo }.AfegirValors(parametros).ToArray();
+                      
+                    }
+                    else if (generic.ImplementInterficie(typeof(IList)))
+                    {
+                        generic = typeof(IList<>);
+                 
+                    }
+
                     serialitzerType = Type.GetType(DicTiposGenericos[generic.AssemblyQualifiedName]).SetTypes(parametros);
-                    elemento = (ElementoBinario) serialitzerType.GetObj(parametros.Select((p) => GetElementoBinario(p)).ToArray());
+                    elemento = (ElementoBinario) serialitzerType.GetObj(parametrosSerializador.Select((p) => GetElementoBinario(p)).ToArray());
                 }
                 else
                 {
@@ -237,13 +253,15 @@ namespace Gabriel.Cat.S.Binaris
             }
             return elemento;
         }
-        private static bool EsCompatible(Type tipo)
+        public static bool EsCompatible(Type tipo)
         {                   //TiposMios //tener en cuenta los tipos que añaden en SerializadoresTiposNoSoportados
             bool compatible=DicTipos.ContainsKey(tipo.AssemblyQualifiedName)||SerializadoresTiposNoSoportados.ContainsKey(tipo.AssemblyQualifiedName);
             if (!compatible)   //TiposBasicos
                 compatible = DicTiposBasicos.ContainsKey(tipo.AssemblyQualifiedName);
-            if (!compatible)//Array Tipo  // los diccionarios y Las listas genericas mirar sus tipos
-                compatible = (tipo.IsArray|| tipo.ImplementInterficie(typeof(IDictionary))|| tipo.ImplementInterficie(typeof(IList))) && EsCompatible(tipo.GetElementType());
+            if (!compatible)//Array Tipo  //  Las listas genericas mirar sus tipos
+                compatible = (tipo.IsArray||  tipo.ImplementInterficie(typeof(IList<>))) && EsCompatible(tipo.GetElementType());
+            if (!compatible)//los diccionarios
+                compatible = tipo.ImplementInterficie(typeof(IDictionary<,>)) && EsCompatible(tipo.GetGenericArguments().First()) && EsCompatible(tipo.GetGenericArguments().Last());
             if (!compatible)//KeyValuePair
                 compatible = tipo.GetGenericTypeDefinition().AssemblyQualifiedName.Equals(typeof(KeyValuePair<,>).AssemblyQualifiedName) && !tipo.GetGenericArguments().Select((t) => EsCompatible(t)).Any((esCompatible) => !esCompatible);
             if (!compatible) //TwoKeys
@@ -252,14 +270,14 @@ namespace Gabriel.Cat.S.Binaris
             return compatible;
         }
 
-        private static bool AccesibilidadOk(PropiedadTipo p)
+        public static bool AccesibilidadOk(PropiedadTipo p)
         {
             bool correcto= !p.Atributos.Contains(new IgnoreSerialitzer());
             if (correcto)
             {
                 //miro get
                 correcto = p.Uso.HasFlag(UsoPropiedad.Get);
-                if (correcto&&(p.Tipo.IsArray||!(p.Tipo.ImplementInterficie(typeof(IList)) || p.Tipo.ImplementInterficie(typeof(IDictionary)))))
+                if (correcto&&(p.Tipo.IsArray||!(p.Tipo.ImplementInterficie(typeof(IList<>)) || p.Tipo.ImplementInterficie(typeof(IDictionary<,>)))))
                 {//si no es una lista o un diccionario miro si tiene el set
                   correcto= p.Uso.HasFlag(UsoPropiedad.Set);
                 }

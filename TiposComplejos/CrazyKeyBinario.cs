@@ -9,11 +9,11 @@ namespace Gabriel.Cat.S.Binaris
 {
     public class CrazyKeyBinario : ElementoIListBinario<ItemBinario>
     {
-        public CrazyKeyBinario(LongitudBinaria unidadCantidadElementos = LongitudBinaria.UInt) : base(new CrazyKeyBinario(), unidadCantidadElementos)
+        public CrazyKeyBinario(LongitudBinaria unidadCantidadElementos = LongitudBinaria.UInt) : base(new CrazyItemBinario(), unidadCantidadElementos)
         {
         }
 
-        public CrazyKeyBinario(byte[] marcaFin) : base(new CrazyKeyBinario(), marcaFin)
+        public CrazyKeyBinario(byte[] marcaFin) : base(new CrazyItemBinario(), marcaFin)
         {
         }
         protected override byte[] IGetBytes(object obj)

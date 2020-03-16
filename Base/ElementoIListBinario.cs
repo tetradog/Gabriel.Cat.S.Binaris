@@ -1,6 +1,7 @@
 ﻿using Gabriel.Cat.S.Extension;
 using Gabriel.Cat.S.Utilitats;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -91,7 +92,7 @@ namespace Gabriel.Cat.S.Binaris
         #region implemented abstract members of ElementoBinarioNullable
         protected override byte[] JGetBytes(object obj)
         {
-            IList<T> lst = obj as IList<T>;
+            IList lst = obj as IList;
             object[] partes = new object[lst.Count];
             byte[] longitud = null;
             byte[] bytesObjs = null;
