@@ -246,7 +246,7 @@ namespace Gabriel.Cat.S.Binaris
                     serialitzerType = Type.GetType(DicTiposGenericos[generic.AssemblyQualifiedName]).SetTypes(parametros);
                     elemento = (ElementoBinario) serialitzerType.GetObj(parametrosSerializador.Select((p) => GetElementoBinario(p)).ToArray());
                 }
-                else if (tipo.IsArray)
+                else if (tipo.IsArray&&tipo.GetElementType().AssemblyQualifiedName!=typeof(byte).AssemblyQualifiedName)
                 {
                     serialitzerType = typeof(ElementoArrayBinario<>).SetTypes(tipo.GetElementType());
                     elemento = (ElementoBinario)serialitzerType.GetObj(GetElementoBinario(tipo.GetElementType()));

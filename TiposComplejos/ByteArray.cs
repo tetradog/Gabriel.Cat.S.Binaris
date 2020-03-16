@@ -19,6 +19,7 @@ namespace Gabriel.Cat.S.Binaris
         public ByteArrayBinario(byte[] marcaFin)
         {
             this.marcaFin = marcaFin;
+            this.unidad = LongitudBinaria.MarcaFin;
         }
     
 
@@ -30,8 +31,30 @@ namespace Gabriel.Cat.S.Binaris
 
         protected override object IGetObject(MemoryStream bytes)
         {
-            byte[] data = new byte[Serializar.ToInt(bytes.Read(sizeof(int)))];
-            bytes.Read(data, 0, data.Length);
+            long aux;
+            long longitud=default;
+            
+            byte[] data=default;
+            switch (unidad)
+            {
+                case LongitudBinaria.UInt:longitud = Serializar.ToUInt(bytes.Read(sizeof(uint)));break;
+                case LongitudBinaria.UShort: longitud = Serializar.ToUShort(bytes.Read(sizeof(ushort))); break;
+                case LongitudBinaria.Byte: longitud = bytes.ReadByte(); break;
+                case LongitudBinaria.MarcaFin:
+                    aux = bytes.Position;
+                    data = new byte[bytes.Length - bytes.Position];
+                    bytes.Read(data,0,data.Length);
+                    longitud = data.SearchArray(marcaFin)-aux;
+                    data = data.SubArray((int)longitud);
+                    bytes.Position = aux + longitud;
+                break;
+
+            }
+            if (data == null)
+            {
+                data = new byte[longitud];
+                bytes.Read(data, 0, data.Length);
+            }
             return data;
         }
         public override string ToString()

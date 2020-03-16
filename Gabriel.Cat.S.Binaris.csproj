@@ -39,7 +39,7 @@
 
   <ItemGroup>
     <PackageReference Include="Gabriel.Cat.S.Seguretat" Version="1.0.2.2-Preview1.0.4" />
-    <PackageReference Include="Gabriel.Cat.S.Utilitats" Version="1.0.4.4-preview1.0.7" />
+    <PackageReference Include="Gabriel.Cat.S.Utilitats" Version="1.0.4.4-preview1.0.8" />
     <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
   </ItemGroup>
 

@@ -46,7 +46,7 @@ namespace Gabriel.Cat.S.Binaris
             matriz= Array.CreateInstance(typeof(T), dimensiones);
 
             for (int i = 0, f = matriz.Length; i < f; i++)
-                matriz.SetValue(dimensiones,i,Serializador.GetObject(bytes));
+                matriz.SetValue(dimensiones,i,(T)Serializador.GetObject(bytes));
 
             return matriz;
         }
