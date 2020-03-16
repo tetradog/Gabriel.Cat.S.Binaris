@@ -12,6 +12,7 @@ using System.Linq;
 namespace Gabriel.Cat.S.Binaris
 {
     public delegate T GetEmtpyNewObject<T>();
+    public delegate object GetEmtpyNewObject();
     public abstract class ElementoBinario
     {
         public static LlistaOrdenada<string, ElementoBinario> SerializadoresTiposNoSoportados { get; private set; }
@@ -103,7 +104,18 @@ namespace Gabriel.Cat.S.Binaris
         /// <typeparam name="T">Tipo a generar el serializador</typeparam>
         /// <param name="MetodoNew">Si el tipo no tiene un New() se debe de dar una forma de generar el tipo</param>
         /// <returns>Serializador del tipo indicado</returns>
-        public static ElementoBinario GetSerializador<T>(GetEmtpyNewObject<T> MetodoNew=null) 
+         static ElementoBinario GetSerializador<T>(GetEmtpyNewObject<T> MetodoNew=null) 
+        {
+            return GetElementoComplejoAuto(typeof(T), () => MetodoNew != null ? MetodoNew() : typeof(T).GetObj());
+        }
+
+        /// <summary>
+        /// Se usan las propiedades con Get y Set y las List,IDictionary,TwoKeysList(deben estar inicializadas desde el contructor) con solo Get además se ignorará las propiedades con el atributo nameof(IgnoreSerialitzer)
+        /// </summary>
+        /// <typeparam name="T">Tipo a generar el serializador</typeparam>
+        /// <param name="MetodoNew">Si el tipo no tiene un New() se debe de dar una forma de generar el tipo</param>
+        /// <returns>Serializador del tipo indicado</returns>
+         static ElementoBinario GetElementoComplejoAuto(Type tipo,GetEmtpyNewObject MetodoNew = null)
         {
             IList<PropiedadTipo> propiedades;
             IList<ElementoBinario> serializadorPartes;
@@ -112,29 +124,28 @@ namespace Gabriel.Cat.S.Binaris
 
             if (MetodoNew == null)
             {
-                MetodoNew = (GetEmtpyNewObject<T>)(() => { return (T)typeof(T).GetObj(); });
+                MetodoNew = (GetEmtpyNewObject)(() => { return tipo.GetObj(); });
                 try
                 {
                     MetodoNew();//asi no se tiene que probar el serializador para saber que no funciona, al obtenero ya se veria el problema
                 }
-                catch (Exception e){ throw e; }
+                catch (Exception e) { throw e; }
             }
-            propiedades =GetPropiedadesCompatibles(typeof(T).GetPropiedadesTipos());
-       
+            propiedades = GetPropiedadesCompatibles(tipo.GetPropiedadesTipos());
+            if (propiedades.Count == 0)
+                throw new Exception($"El tipo {tipo.Name} no es compatible");
             serializadorPartes = GetSerializadorPartes(propiedades);
-            getParts=(obj)=>GetPartes(obj,propiedades);
+            getParts = (obj) => GetPartes(obj, propiedades);
             getObject = (iPartes) => {
-                 T obj= MetodoNew();
-                 SetPartes(obj, propiedades, iPartes);
+                object obj = MetodoNew();
+                SetPartes(obj, propiedades, iPartes);
 
                 return obj;
-            
+
             };
 
-            return new ElementoComplejoBinarioNullableExt(serializadorPartes,getParts,getObject);
+            return new ElementoComplejoBinarioNullableExt(serializadorPartes, getParts, getObject);
         }
-
-       
 
         private static void SetPartes<T>(T obj, IList<PropiedadTipo> propiedades, object[] partes)
         {
@@ -145,7 +156,11 @@ namespace Gabriel.Cat.S.Binaris
 
             for (int i =0; i < propiedades.Count; i++)
             {
-                if (propiedades[i].Tipo.ImplementInterficie(typeof(IDictionary)))
+                if (propiedades[i].Uso.HasFlag(UsoPropiedad.Set))
+                {
+                    obj.SetProperty(propiedades[i].Nombre, partes[i]);
+                }
+                else if (propiedades[i].Tipo.ImplementInterficie(typeof(IDictionary)))
                 {
                     dic = (IDictionary)obj.GetProperty(propiedades[i].Nombre);
                     pairs = (KeyValuePair<object, object>[])partes[i];
@@ -159,10 +174,7 @@ namespace Gabriel.Cat.S.Binaris
                     for (int j = 0; j < objs.Length; j++)
                         lst.Add(objs[j]);
                 }
-                else
-                {
-                    obj.SetProperty(propiedades[i].Nombre, partes[i]);
-                }
+            
             }
         }
 
@@ -176,19 +188,20 @@ namespace Gabriel.Cat.S.Binaris
             for (int i = 0; i < propiedades.Count; i++)
             {
                 aux=obj.GetProperty(propiedades[i].Nombre);
-
-                dic = aux as IDictionary;
-                if (dic != null)
+                if (!propiedades[i].Uso.HasFlag(UsoPropiedad.Set))
                 {
-                    aux =Extension.ToArray(dic);
+                    dic = aux as IDictionary;
+                    if (dic != null)
+                    {
+                        aux = Extension.ToArray(dic);
+                    }
+                    else
+                    {
+                        lst = aux as IList;
+                        if (lst != null)
+                            aux = lst.ToArray();
+                    }
                 }
-                else
-                {
-                    lst = aux as IList;
-                    if(lst!=null)
-                         aux = lst.ToArray();
-                }
-
                 partes[i] = aux;
             }
             return partes;
@@ -196,7 +209,7 @@ namespace Gabriel.Cat.S.Binaris
 
         private static IList<ElementoBinario> GetSerializadorPartes(IList<PropiedadTipo> propiedades)
         {
-            return propiedades.Select((p) => GetElementoBinario(p.Tipo)).ToList();
+            return propiedades.Select((p) => GetSerializador(p.Tipo)).ToList();
         }
 
         private static IList<PropiedadTipo> GetPropiedadesCompatibles(IList<PropiedadTipo> list)
@@ -205,8 +218,11 @@ namespace Gabriel.Cat.S.Binaris
         }
 
 
-
-        public static ElementoBinario GetElementoBinario(Type tipo)
+        public static ElementoBinario GetSerializador<T>()
+        {
+            return GetSerializador(typeof(T));
+        }
+        public static ElementoBinario GetSerializador(Type tipo)
         {
             ElementoBinario elemento;
             Type generic;
@@ -244,16 +260,27 @@ namespace Gabriel.Cat.S.Binaris
                     }
 
                     serialitzerType = Type.GetType(DicTiposGenericos[generic.AssemblyQualifiedName]).SetTypes(parametros);
-                    elemento = (ElementoBinario) serialitzerType.GetObj(parametrosSerializador.Select((p) => GetElementoBinario(p)).ToArray());
+                    elemento = (ElementoBinario) serialitzerType.GetObj(parametrosSerializador.Select((p) => GetSerializador(p)).ToArray());
                 }
                 else if (tipo.IsArray&&tipo.GetElementType().AssemblyQualifiedName!=typeof(byte).AssemblyQualifiedName)
                 {
                     serialitzerType = typeof(ElementoArrayBinario<>).SetTypes(tipo.GetElementType());
-                    elemento = (ElementoBinario)serialitzerType.GetObj(GetElementoBinario(tipo.GetElementType()));
+                    elemento = (ElementoBinario)serialitzerType.GetObj(GetSerializador(tipo.GetElementType()));
                 }
                 else
                 {
-                    elemento = DicTipos[tipo.AssemblyQualifiedName];
+                    if (DicTipos.ContainsKey(tipo.AssemblyQualifiedName))
+                    {
+                        elemento = DicTipos[tipo.AssemblyQualifiedName];
+                    }
+                    else
+                    {
+                        try
+                        {
+                            elemento = GetElementoComplejoAuto(tipo);//mirar si funciona
+                        }
+                        catch { elemento = null; }
+                    }
                 }
             }
             return elemento;
@@ -271,7 +298,16 @@ namespace Gabriel.Cat.S.Binaris
                 compatible = tipo.GetGenericTypeDefinition().AssemblyQualifiedName.Equals(typeof(KeyValuePair<,>).AssemblyQualifiedName) && !tipo.GetGenericArguments().Select((t) => EsCompatible(t)).Any((esCompatible) => !esCompatible);
             if (!compatible) //TwoKeys
                 compatible = tipo.GetGenericTypeDefinition().AssemblyQualifiedName.Equals(typeof(TwoKeys<,>).AssemblyQualifiedName) && !tipo.GetGenericArguments().Select((t) => EsCompatible(t)).Any((esCompatible) => !esCompatible);
-
+            if (!compatible)
+            {
+                //si es un tipo con propiedades compatibles es compatible
+                try
+                {   //mirar si hay recursividad infinita
+                   GetElementoComplejoAuto(tipo);
+                   compatible = true;
+                }
+                catch { }
+            }
             return compatible;
         }
 
@@ -282,8 +318,8 @@ namespace Gabriel.Cat.S.Binaris
             {
                 //miro get
                 correcto = p.Uso.HasFlag(UsoPropiedad.Get);
-                if (correcto&&(p.Tipo.IsArray||!(p.Tipo.ImplementInterficie(typeof(IList<>)) || p.Tipo.ImplementInterficie(typeof(IDictionary<,>)))))
-                {//si no es una lista o un diccionario miro si tiene el set
+                if (correcto && p.Tipo.IsArray|| !( p.Tipo.ImplementInterficie(typeof(IList<>)) || p.Tipo.ImplementInterficie(typeof(IDictionary<,>)) ) )
+                {//si no es una lista o un diccionario miro si tiene el set porque no es obligatorio
                   correcto= p.Uso.HasFlag(UsoPropiedad.Set);
                 }
               

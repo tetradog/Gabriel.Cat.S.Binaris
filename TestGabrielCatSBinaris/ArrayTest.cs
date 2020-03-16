@@ -83,7 +83,7 @@ namespace TestGabrielCatSBinaris
             {
                 array[k] = getElement();
             }
-            serializador = ElementoBinario.GetElementoBinario(array.GetType());
+            serializador = ElementoBinario.GetSerializador(array.GetType());
             data = serializador.GetBytes(array);
             arrayDeserializada = (T[])serializador.GetObject(data);
            return Equals(array,arrayDeserializada);

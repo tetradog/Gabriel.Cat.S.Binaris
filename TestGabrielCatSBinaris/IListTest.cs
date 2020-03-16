@@ -19,7 +19,7 @@ namespace TestGabrielCatSBinaris
             byte[] data;
             List<long> lstDeserializada;
             List<long> lst = new List<long>();
-            ElementoBinario serializador=ElementoBinario.GetElementoBinario(lst.GetType());
+            ElementoBinario serializador=ElementoBinario.GetSerializador(lst.GetType());
             for (int i = 0; i < ELEMENTS; i++)
                 lst.Add(DateTime.Now.Ticks);
             data = serializador.GetBytes(lst);
@@ -34,7 +34,7 @@ namespace TestGabrielCatSBinaris
             byte[] data;
             List<IdUnico> lstDeserializada;
             List<IdUnico> lst = new List<IdUnico>();
-            ElementoBinario serializador = ElementoBinario.GetElementoBinario(lst.GetType());
+            ElementoBinario serializador = ElementoBinario.GetSerializador(lst.GetType());
             for (int i = 0; i < ELEMENTS; i++)
                 lst.Add(new IdUnico());
             data = serializador.GetBytes(lst);
@@ -50,7 +50,7 @@ namespace TestGabrielCatSBinaris
             List<IdUnico> aux;
             List<List<IdUnico>> lstDeserializada;
             List<List<IdUnico>> lst = new List<List<IdUnico>>();
-            ElementoBinario serializador = ElementoBinario.GetElementoBinario(lst.GetType());
+            ElementoBinario serializador = ElementoBinario.GetSerializador(lst.GetType());
             for (int i = 0; i < ELEMENTS; i++)
             {
                 aux = new List<IdUnico>();

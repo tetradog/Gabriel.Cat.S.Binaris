@@ -24,7 +24,7 @@ namespace TestBinaris
             for (int i = 0; i < ELEMENTOS; i++)
                 dic.Add(DateTime.Now.Ticks, DateTime.Now.ToShortTimeString());
 
-            serializador = ElementoBinario.GetElementoBinario(dic.GetType());
+            serializador = ElementoBinario.GetSerializador(dic.GetType());
             data = serializador.GetBytes(dic);
             dic2 = (SortedList<long, string>)serializador.GetObject(data);
             Assert.IsTrue(Equals(dic, dic2));
@@ -41,7 +41,7 @@ namespace TestBinaris
             for (int i = 0; i < ELEMENTOS; i++)
                 dic.Add(new IdUnico(), DateTime.Now.ToShortTimeString());
 
-            serializador = ElementoBinario.GetElementoBinario(dic.GetType());
+            serializador = ElementoBinario.GetSerializador(dic.GetType());
             data = serializador.GetBytes(dic);
             dic2 = (SortedList<IdUnico, string>)serializador.GetObject(data);
             Assert.IsTrue(Equals(dic, dic2));
@@ -64,7 +64,7 @@ namespace TestBinaris
 
                 dic.Add(new IdUnico(),aux);
             }
-            serializador = ElementoBinario.GetElementoBinario(dic.GetType());
+            serializador = ElementoBinario.GetSerializador(dic.GetType());
             data = serializador.GetBytes(dic);
             dic2 = (SortedList<IdUnico, SortedList<IdUnico, string>>)serializador.GetObject(data);
             Assert.IsTrue(dic.GetKeys().AreEquals(dic2.GetKeys())&&Equals(dic.GetValues(), dic2.GetValues()));
