@@ -28,5 +28,9 @@ namespace Gabriel.Cat.S.Binaris
         {
             return "TipoDatos=IdUnico";
         }
+        public override ElementoBinario Clon()
+        {
+            return new IdUnicoBinario();
+        }
     }
 }

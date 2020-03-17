@@ -47,6 +47,10 @@ namespace Gabriel.Cat.S.Binaris
             return string.Format("TipoDatos={0}", tipoDatos);
         }
 
+        public override ElementoBinario Clon()
+        {
+            return new ElementoBinarioTamañoFijo(TipoDatos);
+        }
     }
 }
 

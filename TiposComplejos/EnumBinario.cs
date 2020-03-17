@@ -22,5 +22,9 @@ namespace Gabriel.Cat.S.Binaris
         {
             return $"TipoDatos={typeof(T).Name}Binario";
         }
+        public override ElementoBinario Clon()
+        {
+            return new EnumBinario<T>();
+        }
     }
 }

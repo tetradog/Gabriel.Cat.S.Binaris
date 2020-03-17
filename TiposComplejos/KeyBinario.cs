@@ -32,6 +32,10 @@ namespace Gabriel.Cat.S.Binaris
         {
             return "TipoDatos=KeyBinarioConId";
         }
+        public override ElementoBinario Clon()
+        {
+            return new KeyBinarioConId();
+        }
     }
     public class KeyBinario : ElementoIListBinario<ItemBinario>
     {
@@ -58,6 +62,13 @@ namespace Gabriel.Cat.S.Binaris
         {
             return "TipoDatos=KeyBinario";
         }
+        public override ElementoBinario Clon()
+        {
+            byte[] m = MarcaFin;
+            LongitudBinaria l = Longitud;
+
+            return new KeyBinario() { Longitud = l, MarcaFin = m };
+        }
     }
     public class ItemBinario : ElementoComplejoBinario
     {
@@ -82,6 +93,10 @@ namespace Gabriel.Cat.S.Binaris
         public override string ToString()
         {
             return "TipoDatos=ItemKeyBinario";
+        }
+        public override ElementoBinario Clon()
+        {
+            return new ItemBinario();
         }
     }
 }

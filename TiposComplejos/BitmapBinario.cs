@@ -51,8 +51,10 @@ namespace Gabriel.Cat.S.Binaris
             return "TipoDatos=Bitmap";
         }
 
-
-     
+        public override ElementoBinario Clon()
+        {
+            return new BitmapBinario();
+        }
     }
 
 }

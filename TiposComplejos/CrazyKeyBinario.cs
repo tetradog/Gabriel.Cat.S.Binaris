@@ -34,6 +34,13 @@ namespace Gabriel.Cat.S.Binaris
         {
             return "TipoDatos=CrazyKey";
         }
+        public override ElementoBinario Clon()
+        {
+            byte[] m = MarcaFin;
+            LongitudBinaria l = Longitud;
+
+            return new CrazyKeyBinario() { Longitud = l, MarcaFin = m };
+        }
     }
     public class CrazyItemBinario : ElementoComplejoBinario
     {
@@ -61,6 +68,11 @@ namespace Gabriel.Cat.S.Binaris
         public override string ToString()
         {
             return "TipoDatos=CrazyItem";
+        }
+
+        public override ElementoBinario Clon()
+        {
+            return new CrazyItemBinario();
         }
     }
 }

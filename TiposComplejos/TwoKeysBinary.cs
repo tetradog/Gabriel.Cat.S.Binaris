@@ -13,6 +13,7 @@ namespace Gabriel.Cat.S.Binaris
         public TwoKeysBinario(ElementoBinario serializadorTKey1, ElementoBinario serializadorTKey2) : base(serializadorTKey1, serializadorTKey2)
         {
         }
+        public ElementoBinario SerializadorTKey2 => SerializadorValue;
         protected override object IGetObject(MemoryStream bytes)
         {
             KeyValuePair<TKey1,TKey2> pair=(KeyValuePair<TKey1, TKey2>) base.IGetObject(bytes);
@@ -26,6 +27,10 @@ namespace Gabriel.Cat.S.Binaris
         public override string ToString()
         {
             return $"TipoDatos=TwoKeys<{typeof(TKey1).Name},{typeof(TKey2).Name}>Binario";
+        }
+        public override ElementoBinario Clon()
+        {
+            return new TwoKeysBinario<TKey1, TKey2>(SerializadorKey, SerializadorValue);
         }
     }
 }

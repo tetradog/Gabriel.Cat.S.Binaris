@@ -54,5 +54,9 @@ namespace Gabriel.Cat.S.Binaris
         {
             return $"TipoDatos={typeof(T).Name}MatrizBinario";
         }
+        public override ElementoBinario Clon()
+        {
+            return new ElementoArrayBinario<T>(Serializador);
+        }
     }
 }

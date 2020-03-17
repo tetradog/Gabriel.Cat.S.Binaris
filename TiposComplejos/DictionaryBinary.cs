@@ -39,5 +39,10 @@ namespace Gabriel.Cat.S.Binaris
         {
             return $"TipoDatos=DiccionarioBinario<{typeof(TKey).Name},{typeof(TValue).Name}>";
         }
+        public override ElementoBinario Clon()
+        {
+            KeyValuePairBinario<TKey,TValue> pair= (KeyValuePairBinario<TKey, TValue>)Elemento;
+            return new DictionaryBinary<T, TKey, TValue>(pair.SerializadorKey, pair.SerializadorValue);
+        }
     }
 }

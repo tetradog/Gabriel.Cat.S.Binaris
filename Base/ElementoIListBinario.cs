@@ -42,15 +42,16 @@ namespace Gabriel.Cat.S.Binaris
         {
             return new ElementoIListBinario<T>(ElementoBinario.ElementoTipoAceptado(tipo));
         }
+        public override ElementoBinario Clon()
+        {
+            return new ElementoIListBinario<T>(Elemento);
+        }
     }
         public class ElementoIListBinario<TList,T> : ElementoBinarioNullable, IElementoBinarioIList where TList:class,IList,new()
     {
 
 
         byte[] marcaFin;
-
-        LongitudBinaria longitud;
-
         ElementoBinario elemento;
 
         public ElementoIListBinario(ElementoBinario elemento):this(elemento,LongitudBinaria.UInt)
@@ -87,17 +88,7 @@ namespace Gabriel.Cat.S.Binaris
             }
         }
 
-        public LongitudBinaria Longitud
-        {
-            get
-            {
-                return longitud;
-            }
-            set
-            {
-                longitud = value;
-            }
-        }
+        public LongitudBinaria Longitud { get; set; }
 
         public ElementoBinario Elemento
         {
@@ -227,7 +218,10 @@ namespace Gabriel.Cat.S.Binaris
             return $"Lista de {typeof(T).Name}";
         }
 
-       
+        public override ElementoBinario Clon()
+        {
+            return new ElementoIListBinario<TList, T>(Elemento);
+        }
     }
 
 }

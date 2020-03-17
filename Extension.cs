@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Gabriel.Cat.S.Utilitats;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,6 +7,7 @@ using System.Text;
 
 namespace Gabriel.Cat.S.Binaris
 {
+
     public static class Extension
     {
 
@@ -21,6 +23,13 @@ namespace Gabriel.Cat.S.Binaris
                 values.MoveNext();
             }
             return valuePairs;
+        }
+        public static List<T> Clone<T>(this IList<T> list) where T:IClonable<T>
+        {
+            List<T> lst = new List<T>();
+            for (int i = 0; i < list.Count; i++)
+                lst.Add(list[i].Clon());
+            return lst;
         }
 
     }

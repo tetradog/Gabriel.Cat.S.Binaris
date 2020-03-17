@@ -15,6 +15,8 @@ namespace Gabriel.Cat.S.Binaris
             KeyValuePair<TKey, TValue> pair = (KeyValuePair<TKey, TValue>)obj;
             return new object[] { pair.Key, pair.Value };
         }
+        public ElementoBinario SerializadorKey => Partes[0];
+        public ElementoBinario SerializadorValue => Partes[1];
 
         protected override object JGetObject(MemoryStream bytes)
         {
@@ -24,6 +26,10 @@ namespace Gabriel.Cat.S.Binaris
         public override string ToString()
         {
             return $"TipoDatos=KeyValuePair<{typeof(TKey).Name},{typeof(TValue).Name}>Binario";
+        }
+        public override ElementoBinario Clon()
+        {
+            return new KeyValuePairBinario<TKey, TValue>(SerializadorKey, SerializadorValue);
         }
     }
 }

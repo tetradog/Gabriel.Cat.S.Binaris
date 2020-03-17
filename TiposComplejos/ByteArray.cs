@@ -61,5 +61,11 @@ namespace Gabriel.Cat.S.Binaris
         {
             return "TipoDatos=ByteArray";
         }
+        public override ElementoBinario Clon()
+        {
+            byte[] auxMarca = marcaFin;
+            LongitudBinaria longitud = unidad;
+            return new ByteArrayBinario() { marcaFin =auxMarca, unidad = longitud };
+        }
     }
 }

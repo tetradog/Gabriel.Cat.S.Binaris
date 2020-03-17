@@ -86,6 +86,11 @@ namespace Gabriel.Cat.S.Binaris
         {
             return GetPartsObjectDelegate(obj);
         }
+
+        public override ElementoBinario Clon()
+        {
+            return new ElementoComplejoBinarioNullableExt(Partes, GetPartsObjectDelegate, GetObjectDelegate);
+        }
         #endregion
 
     }

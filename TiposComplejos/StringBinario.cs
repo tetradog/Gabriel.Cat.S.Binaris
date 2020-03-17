@@ -35,5 +35,12 @@ namespace Gabriel.Cat.S.Binaris
         {
             return "TipoDatos=String";
         }
+        public override ElementoBinario Clon()
+        {
+            byte[] m = MarcaFin;
+            LongitudBinaria l = Longitud;
+
+            return new StringBinario() {Longitud=l,MarcaFin=m };
+        }
     }
 }
