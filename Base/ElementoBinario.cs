@@ -53,7 +53,11 @@ namespace Gabriel.Cat.S.Binaris
         }
         public byte[] GetBytes(object obj)
         {
-            byte[] bytes = IGetBytes(obj);
+            byte[] bytes;
+            ISaveAndLoad save = obj as ISaveAndLoad;
+            if (save != default)
+                save.Save();
+            bytes= IGetBytes(obj);
             if (Key != null)
             {
                 bytes = byteArrayBinario.GetBytes(Key.Encrypt(bytes));
@@ -72,14 +76,22 @@ namespace Gabriel.Cat.S.Binaris
         public object GetObject(MemoryStream bytes)
         {
             byte[] bytesObj;
-
+            object obj;
+            ISaveAndLoad load;
+         
             if (Key != null)
             {
                 bytesObj = (byte[])byteArrayBinario.GetObject(bytes);
                 bytes = new MemoryStream(Key.Decrypt(bytesObj));
             }
             
-            return IGetObject(bytes);
+            obj= IGetObject(bytes);
+
+            load = obj as ISaveAndLoad;
+            if (load != default)
+                load.Load();
+
+            return obj;
         }
 
         protected abstract object IGetObject(MemoryStream bytes);
