@@ -6,12 +6,12 @@
     <PackageProjectUrl>https://github.com/tetradog/Gabriel.Cat.S.Binaris</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/tetradog/Gabriel.Cat.S.Binaris/blob/master/LICENSE.txt</PackageLicenseUrl>
     <Copyright />
-    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <RepositoryType>Git</RepositoryType>
     <FileVersion>1.0.0.1</FileVersion>
     <AssemblyVersion>1.0.0.1</AssemblyVersion>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>1.1.1-Preview1.0.1</Version>
+    <Version>1.1.2</Version>
     <Authors>Gabriel.Cat.Developer</Authors>
     <Company>Gabriel.Cat.Developer</Company>
     <Description>Sirve para serializar fácilmente.</Description>
