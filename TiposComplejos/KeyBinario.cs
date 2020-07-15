@@ -37,7 +37,7 @@ namespace Gabriel.Cat.S.Binaris
             return new KeyBinarioConId();
         }
     }
-    public class KeyBinario : ElementoIListBinario<ItemBinario>
+    public class KeyBinario : ElementoIListBinario<Key.ItemKey>
     {
         public KeyBinario( LongitudBinaria unidadCantidadElementos = LongitudBinaria.UInt) : base(new ItemBinario(), unidadCantidadElementos)
         {
@@ -52,11 +52,11 @@ namespace Gabriel.Cat.S.Binaris
             if (key == null)
                 throw new ArgumentException("tiene que ser un objeto "+(typeof(Key).FullName),"obj");
 
-            return base.GetBytes(key.ItemsKey);
+            return base.JGetBytes(key.ItemsKey);
         }
         protected override object IGetObject(MemoryStream bytes)
         {
-            return new Key((Key.ItemKey[])base.GetObject(bytes));
+            return new Key((Key.ItemKey[])base.JGetObject(bytes));
         }
         public override string ToString()
         {
