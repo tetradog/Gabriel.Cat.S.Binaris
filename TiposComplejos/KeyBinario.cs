@@ -26,7 +26,7 @@ namespace Gabriel.Cat.S.Binaris
         {
             object[] partes = GetPartsObject(bytes);
             Key key = (Key)partes[1];
-            return new Key(key.ItemsKey,new IdUnico((byte[])partes[0]));
+            return new Key(key.ItemsKey,true,new IdUnico((byte[])partes[0]));
         }
         public override string ToString()
         {
