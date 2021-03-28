@@ -4,17 +4,18 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <RepositoryUrl>https://github.com/tetradog/Gabriel.Cat.S.Binaris</RepositoryUrl>
     <PackageProjectUrl>https://github.com/tetradog/Gabriel.Cat.S.Binaris</PackageProjectUrl>
-    <PackageLicenseUrl>https://github.com/tetradog/Gabriel.Cat.S.Binaris/blob/master/LICENSE.txt</PackageLicenseUrl>
-    <Copyright />
+    <PackageLicenseUrl></PackageLicenseUrl>
+    <Copyright>Gabriel.Cat.Developer</Copyright>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <RepositoryType>Git</RepositoryType>
     <FileVersion>1.0.0.1</FileVersion>
     <AssemblyVersion>1.0.0.1</AssemblyVersion>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>1.1.4</Version>
+    <Version>1.1.5-Preview1.0</Version>
     <Authors>Gabriel.Cat.Developer</Authors>
     <Company>Gabriel.Cat.Developer</Company>
     <Description>Sirve para serializar fácilmente.</Description>
+    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -35,15 +36,16 @@
     <EmbeddedResource Remove="TestGabrielCatSBinaris\**" />
     <None Remove="TestBinaris\**" />
     <None Remove="TestGabrielCatSBinaris\**" />
+    <None Include="LICENSE.txt">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Gabriel.Cat.S.Seguretat" Version="1.0.2.2-Preview1.0.8" />
+    <PackageReference Include="Gabriel.Cat.S.Utilitats" Version="1.1.5.4" />
     <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Gabriel.Cat.S.Seguretat\Gabriel.Cat.S.Seguretat\Gabriel.Cat.S.Seguretat.csproj" />
-    <ProjectReference Include="..\Gabriel.Cat.S.Utilitats\Gabriel.Cat.S.Utilitats\Gabriel.Cat.S.Utilitats.csproj" />
   </ItemGroup>
 
 </Project>

@@ -239,10 +239,7 @@ namespace Gabriel.Cat.S.Binaris
         public static ElementoBinario GetSerializador(Type tipo)
         {
             ElementoBinario elemento;
-            Type generic;
-            Type[] parametros;
-            Type[] parametrosSerializador;
-            Type serialitzerType;
+
 
             if(DicTiposBasicos.ContainsKey(tipo.AssemblyQualifiedName))
             {
@@ -250,61 +247,79 @@ namespace Gabriel.Cat.S.Binaris
             }else if (tipo.ImplementInterficie(typeof(IElementoBinarioComplejo)))
             {
                 elemento = ((IElementoBinarioComplejo)tipo.GetObj()).Serialitzer;
+                if (Equals(elemento, default))
+                {
+                    //significa que el Serializador se tiene que generar
+                    elemento = IGetSerialitzerAuto(tipo);
+                }
             }else if (SerializadoresTiposNoSoportados.ContainsKey(tipo.AssemblyQualifiedName))
             {
                 elemento = SerializadoresTiposNoSoportados[tipo.AssemblyQualifiedName];
             }
             else
             {
-                if (tipo.IsGenericType)
-                {
-                    generic = tipo.GetGenericTypeDefinition();
-                    parametros = tipo.GetGenericArguments();
-                    parametrosSerializador = parametros;
-                    if (generic.ImplementInterficie(typeof(IDictionary)))
-                    {
-                        generic = typeof(IDictionary<,>);
-                        parametros = new Type[] { tipo }.AfegirValors(parametros).ToArray();
-                      
-                    }
-                    else if (generic.ImplementInterficie(typeof(IList)))
-                    {
-                        generic = typeof(IList<>);
-                        parametros = new Type[] { tipo }.AfegirValors(parametros).ToArray();
-                    }
+                elemento=IGetSerialitzerAuto(tipo);
+            }
 
-                    serialitzerType = Type.GetType(DicTiposGenericos[generic.AssemblyQualifiedName]).SetTypes(parametros);
-                    elemento = (ElementoBinario) serialitzerType.GetObj(parametrosSerializador.Select((p) => GetSerializador(p)).ToArray());
-                }
-                else if (tipo.IsArray&&tipo.GetElementType().AssemblyQualifiedName!=typeof(byte).AssemblyQualifiedName)
+            return elemento;
+        }
+
+        private static ElementoBinario IGetSerialitzerAuto(Type tipo)
+        {
+            ElementoBinario elemento;
+            Type generic;
+            Type[] parametros;
+            Type[] parametrosSerializador;
+            Type serialitzerType;
+            if (tipo.IsGenericType)
+            {
+                generic = tipo.GetGenericTypeDefinition();
+                parametros = tipo.GetGenericArguments();
+                parametrosSerializador = parametros;
+                if (generic.ImplementInterficie(typeof(IDictionary)))
                 {
-                    serialitzerType = typeof(ElementoArrayBinario<>).SetTypes(tipo.GetElementType());
-                    elemento = (ElementoBinario)serialitzerType.GetObj(GetSerializador(tipo.GetElementType()));
+                    generic = typeof(IDictionary<,>);
+                    parametros = new Type[] { tipo }.AfegirValors(parametros).ToArray();
+
+                }
+                else if (generic.ImplementInterficie(typeof(IList)))
+                {
+                    generic = typeof(IList<>);
+                    parametros = new Type[] { tipo }.AfegirValors(parametros).ToArray();
+                }
+
+                serialitzerType = Type.GetType(DicTiposGenericos[generic.AssemblyQualifiedName]).SetTypes(parametros);
+                elemento = (ElementoBinario)serialitzerType.GetObj(parametrosSerializador.Select((p) => GetSerializador(p)).ToArray());
+            }
+            else if (tipo.IsArray && tipo.GetElementType().AssemblyQualifiedName != typeof(byte).AssemblyQualifiedName)
+            {
+                serialitzerType = typeof(ElementoArrayBinario<>).SetTypes(tipo.GetElementType());
+                elemento = (ElementoBinario)serialitzerType.GetObj(GetSerializador(tipo.GetElementType()));
+            }
+            else
+            {
+                if (DicTipos.ContainsKey(tipo.AssemblyQualifiedName))
+                {
+                    elemento = DicTipos[tipo.AssemblyQualifiedName];
+                }
+                else if (GuardarSerializadoresAutosHechos && SerializadoresElementosAutosHechos.ContainsKey(tipo.AssemblyQualifiedName))
+                {
+                    elemento = SerializadoresElementosAutosHechos[tipo.AssemblyQualifiedName].Clon();
                 }
                 else
                 {
-                    if (DicTipos.ContainsKey(tipo.AssemblyQualifiedName))
+                    try
                     {
-                        elemento = DicTipos[tipo.AssemblyQualifiedName];
+                        elemento = GetElementoComplejoAuto(tipo);//mirar si funciona
+                        if (GuardarSerializadoresAutosHechos)
+                            SerializadoresElementosAutosHechos.Add(tipo.AssemblyQualifiedName, elemento.Clon());
                     }
-                    else if (GuardarSerializadoresAutosHechos&&SerializadoresElementosAutosHechos.ContainsKey(tipo.AssemblyQualifiedName))
-                    {
-                        elemento = SerializadoresElementosAutosHechos[tipo.AssemblyQualifiedName].Clon();
-                    }
-                    else
-                    {
-                        try
-                        {
-                            elemento = GetElementoComplejoAuto(tipo);//mirar si funciona
-                            if(GuardarSerializadoresAutosHechos)
-                                  SerializadoresElementosAutosHechos.Add(tipo.AssemblyQualifiedName, elemento.Clon());
-                        }
-                        catch { elemento = null; }
-                    }
+                    catch { elemento = null; }
                 }
             }
             return elemento;
         }
+
         public static bool EsCompatible(Type tipo)
         {                   //TiposMios //tener en cuenta los tipos que añaden en SerializadoresTiposNoSoportados
             bool compatible=DicTipos.ContainsKey(tipo.AssemblyQualifiedName)||SerializadoresTiposNoSoportados.ContainsKey(tipo.AssemblyQualifiedName);

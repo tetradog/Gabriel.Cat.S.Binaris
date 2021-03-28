@@ -52,7 +52,7 @@ namespace Gabriel.Cat.S.Binaris
         }
         public override string ToString()
         {
-            return $"TipoDatos={typeof(T).Name}MatrizBinario";
+            return $"TipoDatos={typeof(T).Name} ArrayBinario";
         }
         public override ElementoBinario Clon()
         {
