@@ -4,6 +4,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace Gabriel.Cat.S.Binaris
@@ -131,7 +132,7 @@ namespace Gabriel.Cat.S.Binaris
                     break;
 
                 case LongitudBinaria.MarcaFin:
-                    bytesObjs = new byte[0].AddArray(partes.Casting<byte[]>());
+                    bytesObjs = new byte[0].AddArray(partes.Casting<byte[]>().ToArray());
                     if (bytesObjs.SearchArray(MarcaFin) > 0)
                         throw new Exception("Se ha encontrado los bytes de la marca de fin en los bytes a guardar");
                     bytesObjs = bytesObjs.AddArray(MarcaFin);
@@ -139,7 +140,7 @@ namespace Gabriel.Cat.S.Binaris
             }
             if (bytesObjs == null)
             {
-                bytesObjs = longitud.AddArray(partes.Casting<byte[]>());
+                bytesObjs = longitud.AddArray(partes.Casting<byte[]>().ToArray());
             }
             return bytesObjs;
         }

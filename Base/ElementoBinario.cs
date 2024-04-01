@@ -30,12 +30,13 @@ namespace Gabriel.Cat.S.Binaris
             SerializadoresElementosAutosHechos = new LlistaOrdenada<string, ElementoBinario>();
             SerializadoresTiposNoSoportados = new LlistaOrdenada<string, ElementoBinario>();
             DicTiposGenericos = new LlistaOrdenada<string, string>();//tipo obj generico,tipo serializador generico
-            DicTipos = new LlistaOrdenada<string, ElementoBinario>();
-           //tipos normales
-            DicTipos.Add(typeof(CrazyKey).AssemblyQualifiedName, new CrazyKeyBinario());
-            DicTipos.Add(typeof(IdUnico).AssemblyQualifiedName, new IdUnicoBinario());
-            DicTipos.Add(typeof(Key).AssemblyQualifiedName, new KeyBinario());
-            DicTipos.Add(typeof(byte[]).AssemblyQualifiedName, new ByteArrayBinario());
+            DicTipos = new LlistaOrdenada<string, ElementoBinario>
+            {
+                //tipos normales
+
+                { typeof(IdUnico).AssemblyQualifiedName, new IdUnicoBinario() },
+                { typeof(byte[]).AssemblyQualifiedName, new ByteArrayBinario() }
+            };
             //tipos genericos
             DicTiposGenericos.Add(typeof(KeyValuePair<,>).AssemblyQualifiedName, typeof(KeyValuePairBinario<,>).AssemblyQualifiedName);
             DicTiposGenericos.Add(typeof(TwoKeys<,>).AssemblyQualifiedName, typeof(TwoKeysBinario<,>).AssemblyQualifiedName);
@@ -46,7 +47,7 @@ namespace Gabriel.Cat.S.Binaris
             DicTiposGenericos.Add(typeof(IList<>).AssemblyQualifiedName, typeof(ElementoIListBinario<,>).AssemblyQualifiedName);
 
         }
-        public Key Key { get; set; }
+ 
         public byte[] GetBytes()
         {
             return GetBytes(this);
@@ -58,10 +59,7 @@ namespace Gabriel.Cat.S.Binaris
             if (save != default)
                 save.Save();
             bytes= IGetBytes(obj);
-            if (Key != null)
-            {
-                bytes = byteArrayBinario.GetBytes(Key.Encrypt(bytes));
-            }
+
             return bytes;
 
         }
@@ -75,15 +73,9 @@ namespace Gabriel.Cat.S.Binaris
 
         public object GetObject(MemoryStream bytes)
         {
-            byte[] bytesObj;
             object obj;
             ISaveAndLoad load;
          
-            if (Key != null)
-            {
-                bytesObj = (byte[])byteArrayBinario.GetObject(bytes);
-                bytes = new MemoryStream(Key.Decrypt(bytesObj));
-            }
             
             obj= IGetObject(bytes);
 
@@ -146,7 +138,7 @@ namespace Gabriel.Cat.S.Binaris
                 }
                 catch (Exception e) { throw e; }
             }
-            propiedades = GetPropiedadesCompatibles(tipo.GetPropiedadesTipos());
+            propiedades = GetPropiedadesCompatibles(tipo.GetPropiedadesTipo());
             if (propiedades.Count == 0)
                 throw new Exception($"El tipo {tipo.Name} no es compatible");
             serializadorPartes = GetSerializadorPartes(propiedades);
@@ -228,7 +220,7 @@ namespace Gabriel.Cat.S.Binaris
 
         private static IList<PropiedadTipo> GetPropiedadesCompatibles(IList<PropiedadTipo> list)
         {
-            return list.Filtra((p) =>AccesibilidadOk(p)&&EsCompatible(p.Tipo));
+            return list.Where((p) =>AccesibilidadOk(p)&&EsCompatible(p.Tipo)).ToArray();
         }
 
 
@@ -271,6 +263,7 @@ namespace Gabriel.Cat.S.Binaris
             Type[] parametros;
             Type[] parametrosSerializador;
             Type serialitzerType;
+            List<Type> lsType=new List<Type>();
             if (tipo.IsGenericType)
             {
                 generic = tipo.GetGenericTypeDefinition();
@@ -279,13 +272,17 @@ namespace Gabriel.Cat.S.Binaris
                 if (generic.ImplementInterficie(typeof(IDictionary)))
                 {
                     generic = typeof(IDictionary<,>);
-                    parametros = new Type[] { tipo }.AfegirValors(parametros).ToArray();
+                    lsType.Add(tipo);
+                    lsType.AddRange(parametros);
+                    parametros=lsType.ToArray();
 
                 }
                 else if (generic.ImplementInterficie(typeof(IList)))
                 {
                     generic = typeof(IList<>);
-                    parametros = new Type[] { tipo }.AfegirValors(parametros).ToArray();
+                    lsType.Add(tipo);
+                    lsType.AddRange(parametros);
+                    parametros = lsType.ToArray();
                 }
 
                 serialitzerType = Type.GetType(DicTiposGenericos[generic.AssemblyQualifiedName]).SetTypes(parametros);

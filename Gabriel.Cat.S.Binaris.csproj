@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netstandard2.1</TargetFramework>
     <RepositoryUrl>https://github.com/tetradog/Gabriel.Cat.S.Binaris</RepositoryUrl>
     <PackageProjectUrl>https://github.com/tetradog/Gabriel.Cat.S.Binaris</PackageProjectUrl>
     <PackageLicenseUrl></PackageLicenseUrl>
@@ -43,9 +43,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Gabriel.Cat.S.Seguretat" Version="1.0.2.2-Preview1.0.8" />
-    <PackageReference Include="Gabriel.Cat.S.Utilitats" Version="1.1.5.4" />
-    <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
+    <PackageReference Include="System.Drawing.Common" Version="8.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Gabriel.Cat.S.Seguretat\Gabriel.Cat.S.Seguretat\Gabriel.Cat.S.Seguretat.csproj" />
+    <ProjectReference Include="..\Gabriel.Cat.S.Utilitats\Gabriel.Cat.S.Utilitats\Gabriel.Cat.S.Utilitats.csproj" />
   </ItemGroup>
 
 </Project>
